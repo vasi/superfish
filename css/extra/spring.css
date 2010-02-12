@@ -5,7 +5,7 @@
 	color: #37731f !important;
 }
 .sf-menu.sf-style-spring li,
-.sf-navbar {
+.sf-navbar.sf-style-spring {
 	background: #ecffdf;
 }
 .sf-menu.sf-style-spring li li {

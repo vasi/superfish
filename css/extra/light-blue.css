@@ -4,7 +4,7 @@
 	color: #00305f !important;
 }
 .sf-menu.sf-style-light-blue li,
-.sf-navbar {
+.sf-navbar.sf-style-light-blue {
 	background: #d9ecff;
 }
 .sf-menu.sf-style-light-blue li li {

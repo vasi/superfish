@@ -5,7 +5,7 @@
 	font-weight: bold;
 }
 .sf-menu.sf-style-coffee li,
-.sf-navbar {
+.sf-navbar.sf-style-coffee {
 	background: #210c02;
 }
 .sf-menu.sf-style-coffee li li {

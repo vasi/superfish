@@ -4,7 +4,7 @@
 	color: #ffebee !important;
 }
 .sf-menu.sf-style-pomegranate li,
-.sf-navbar {
+.sf-navbar.sf-style-pomegranate {
 	background: #79001c;
 }
 .sf-menu.sf-style-pomegranate li li {

@@ -6,7 +6,7 @@
 .sf-menu.sf-style-space-teal li,
 .sf-menu.sf-style-space-teal li li,
 .sf-menu.sf-style-space-teal li li li,
-.sf-navbar {
+.sf-navbar.sf-style-space-teal {
 	background: #333333;
 }
 .sf-menu.sf-style-space-teal li:hover, .sf-menu.sf-style-space-teal li.sfHover,

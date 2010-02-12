@@ -6,7 +6,7 @@
 .sf-menu.sf-style-space li,
 .sf-menu.sf-style-space li li,
 .sf-menu.sf-style-space li li li,
-.sf-navbar {
+.sf-navbar.sf-style-space {
 	background: #333333;
 }
 .sf-menu.sf-style-space li:hover, .sf-menu.sf-style-space li.sfHover,
