@@ -1,20 +1,20 @@
 /* $Id$ */
 .sf-menu.sf-style-blue a {
-	border: 1px outset #003973;
-	color: #ffffff !important;
+    border: 1px outset #003973;
+    color: #ffffff !important;
 }
 .sf-menu.sf-style-blue li,
 .sf-navbar.sf-style-blue {
-	background: #095cb1;
+    background: #095cb1;
 }
 .sf-menu.sf-style-blue li li {
-	background: #0151a4;
+    background: #0151a4;
 }
 .sf-menu.sf-style-blue li li li {
-	background: #00478f;
+    background: #00478f;
 }
 .sf-menu.sf-style-blue li:hover, .sf-menu.sf-style-blue li.sfHover,
 .sf-menu.sf-style-blue a:focus, .sf-menu.sf-style-blue a:hover, .sf-menu.sf-style-blue a:active {
-	background: #3270c5;
-	color: #ffea00 !important;
+    background: #3270c5;
+    color: #ffea00 !important;
 }

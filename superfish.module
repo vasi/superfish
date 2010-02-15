@@ -88,26 +88,43 @@ function superfish_block($op = 'list', $delta = 0, $edit = array()) {
       '#title' => t('Menu Type'),
       '#description' => t('There are 3 types of Superfish menus.<br /><b>Horizontal</b> which drops down.<br /><b>Vertical</b> which drops right.<br /><b>NavBar</b> which is a tab-based menu.'),
       '#default_value' => variable_get('superfish_type_'. $delta, 'Horizontal'),
-      '#options' => drupal_map_assoc(array('Horizontal', 'Vertical', 'NavBar')),
+      '#options' => array(
+        'horizontal' => t('Horizontal'),
+        'vertical' => t('Vertical'),
+        'navbar' => t('NavBar')),
     );
     $form['sf-settings']['superfish_style_'. $delta] = array(
       '#type' => 'select',
       '#title' => t('Menu Style'),
       '#default_value' => variable_get('superfish_style_'. $delta, 'default'),
       '#description' => t('Superfish modules has five different colour schemes in addition to the default purplish Superfish menu theme.'),
-      '#options' => drupal_map_assoc(array('default', 'blue', 'coffee', 'light-blue', 'pomegranate', 'space', 'space-orange', 'space-teal', 'space-orange', 'spring', 'white')),
+      '#options' => array(
+        'default' => t('Default'),
+        'blue' => t('Blue'),
+        'coffee' => t('Coffee'),
+        'light-blue' => t('Light blue'),
+        'pomegranate' => t('Pomegranate'),
+        'space' => t('Space [Blue]'),
+        'space-orange' => t('Space [Orange]'),
+        'space-teal' => t('Space [Teal]'),
+        'spring' => t('Spring'),
+        'white' => t('White')),
     );
     $form['sf-settings']['superfish_fade_'. $delta] = array(
       '#type' => 'select',
       '#title' => t('Fade effect'),
       '#default_value' => variable_get('superfish_fade_'. $delta, 'true'),
-      '#options' => drupal_map_assoc(array('true', 'false')),
+      '#options' => array(
+        'true' => t('Yes'),
+        'false' => t('No')),
     );
     $form['sf-settings']['superfish_slide_'. $delta] = array(
       '#type' => 'select',
       '#title' => t('Slide-in effect'),
       '#default_value' => variable_get('superfish_slide_'. $delta, 'true'),
-      '#options' => drupal_map_assoc(array('true', 'false')),
+      '#options' => array(
+        'true' => t('Yes'),
+        'false' => t('No')),
     );
     $form['sf-settings']['superfish_delay_'. $delta] = array(
       '#type' => 'textfield',
@@ -120,25 +137,32 @@ function superfish_block($op = 'list', $delta = 0, $edit = array()) {
       '#type' => 'select',
       '#title' => t('Animation Speed'),
       '#default_value' => variable_get('superfish_speed_'. $delta, 'normal'),
-      '#options' => drupal_map_assoc(array('slow', 'normal', 'fast')),
+      '#options' => array(
+        'slow' => t('Slow'),
+        'normal' => t('Normal'),
+        'fast' => t('Fast')),
     );
     $form['sf-settings']['superfish_shadow_'. $delta] = array(
       '#type' => 'select',
       '#title' => t('Drop shadows'),
       '#default_value' => variable_get('superfish_shadow_'. $delta, 'true'),
-      '#options' => drupal_map_assoc(array('true', 'false')),
+      '#options' => array(
+        'true' => t('Yes'),
+        'false' => t('No')),
     );
     $form['sf-settings']['superfish_arrow_'. $delta] = array(
       '#type' => 'select',
       '#title' => t('Auto-arrows'),
       '#description' => t('Automatically adds an arrow to each parent menu item.'),
       '#default_value' => variable_get('superfish_arrow_'. $delta, 'false'),
-      '#options' => drupal_map_assoc(array('true', 'false')),
+      '#options' => array(
+        'true' => t('Yes'),
+        'false' => t('No')),
     );
     $form['sf-settings']['sf-settings-supersubs'] = array(
       '#type' => 'fieldset',
       '#title' => t('Supersubs options'),
-      '#description' => t('<b>Supersubs</b> makes it possible to define custom widths for your menus.'),
+      '#description' => t('<b>Supersubs</b> makes it possible to define custom widths for your menus. (Recommended)'),
       '#collapsible' => TRUE,
       '#collapsed' => FALSE,
     );
@@ -184,7 +208,7 @@ function superfish_block($op = 'list', $delta = 0, $edit = array()) {
   case 'view' :
     list($menu_name, $mlid) = explode(':', variable_get('superfish_menu_'. $delta, 'navigation:0'));
     $depth = variable_get('superfish_depth_'. $delta, '-1');
-    $type = variable_get('superfish_type_'. $delta, 'Horizontal');
+    $type = variable_get('superfish_type_'. $delta, 'horizontal');
     $style = variable_get('superfish_style_'. $delta, 'default');
     $fade = variable_get('superfish_fade_'. $delta, 'true');
     $slide = variable_get('superfish_slide_'. $delta, 'true');
@@ -194,11 +218,16 @@ function superfish_block($op = 'list', $delta = 0, $edit = array()) {
     $arrow = variable_get('superfish_arrow_'. $delta, 'false');
     $supersubs = variable_get('superfish_supersubs_'. $delta, 1);
 
+    global $language;
+    if ($language->direction == 1) {
+      $type .= ' rtl';
+    }
+
     if ($style != 'default') {
         drupal_add_css(drupal_get_path('module', 'superfish') .'/css/extra/'. $style .'.css');
     }
 
-    // SuperSubs enabled? get the max\min widths
+    // SuperSubs enabled? get the max\min widths and prepare the Javascript code
     if ($supersubs == 1) {
       $minwidth = variable_get('superfish_minwidth_'. $delta, '12');
       $maxwidth = variable_get('superfish_maxwidth_'. $delta, '27');
@@ -221,7 +250,7 @@ function superfish_block($op = 'list', $delta = 0, $edit = array()) {
     }
 
     // And finally assembling our js code
-    $javascript = "jQuery(function(){\n $supersubs_javascript jQuery('ul#superfish-$delta').superfish({\n pathClass: 'active',\n delay: $delay,\n $animation\n speed: '$speed',\n autoArrows: $arrow,\n dropShadows: $shadow\n});\n});";
+    $javascript = "jQuery(function(){\n $supersubs_javascript jQuery('ul#superfish-$delta').superfish({\n pathClass: 'active',\n delay: $delay,\n $animation\n speed: '$speed',\n autoArrows: $arrow,\n dropShadows: $shadow\n}).find('ul').bgIframe({opacity:false});\n});";
 
     drupal_add_js($javascript, 'inline');
 
@@ -238,6 +267,23 @@ function superfish_block($op = 'list', $delta = 0, $edit = array()) {
 }
 
 /**
+ * Implementation of hook_init().
+  */
+function superfish_init() {
+  if (variable_get('superfish_hid', 1) == 1) {
+    drupal_add_js(drupal_get_path('module', 'superfish') .'/js/jquery.hoverIntent.minified.js');
+  }
+  drupal_add_js(drupal_get_path('module', 'superfish') .'/js/jquery.bgiframe.min.js');
+  drupal_add_js(drupal_get_path('module', 'superfish') .'/js/superfish.js');
+  drupal_add_js(drupal_get_path('module', 'superfish') .'/js/supersubs.js');
+
+  // Adding CSS
+  drupal_add_css(drupal_get_path('module', 'superfish') .'/css/superfish.css');
+  drupal_add_css(drupal_get_path('module', 'superfish') .'/css/superfish-vertical.css');
+  drupal_add_css(drupal_get_path('module', 'superfish') .'/css/superfish-navbar.css');
+}
+
+/**
  * Implementation of hook_theme().
  */
 function superfish_theme() {
@@ -249,25 +295,9 @@ function superfish_theme() {
         'arguments' => array('id' => NULL, 'menu' => NULL, 'depth' => -1, 'trail' => NULL),
       ),
     'superfish' => array(
-      'arguments' => array('id' => NULL, 'menu_name' => NULL, 'mlid' => NULL, 'type' => 'Horizontal', 'style' => 'Blue', 'depth' => -1, 'menu' => NULL),
+      'arguments' => array('id' => NULL, 'menu_name' => NULL, 'mlid' => NULL, 'type' => 'horizontal', 'style' => 'Blue', 'depth' => -1, 'menu' => NULL),
     )
   );
-}
-
-/**
- * Implementation of hook_init().
-  */
-function superfish_init() {
-  if (variable_get('superfish_hid', 1) == 1) {
-    drupal_add_js(drupal_get_path('module', 'superfish') .'/js/jquery.hoverIntent.minified.js');
-  }
-  drupal_add_js(drupal_get_path('module', 'superfish') .'/js/superfish.js');
-  drupal_add_js(drupal_get_path('module', 'superfish') .'/js/supersubs.js');
-
-  // Adding CSS
-  drupal_add_css(drupal_get_path('module', 'superfish') .'/css/superfish.css');
-  drupal_add_css(drupal_get_path('module', 'superfish') .'/css/superfish-vertical.css');
-  drupal_add_css(drupal_get_path('module', 'superfish') .'/css/superfish-navbar.css');
 }
 
 /**
@@ -379,11 +409,11 @@ function theme_superfish_build($id, $menu, $depth = -1, $trail = NULL) {
 /**
  * Theme function to allow any menu tree to be themed as a Superfish menu.
  */
-function theme_superfish($id, $menu_name, $mlid, $type = 'Horizontal', $style = 'Blue', $depth = -1, $menu = NULL) {
+function theme_superfish($id, $menu_name, $mlid, $type = 'horizontal', $style = 'Blue', $depth = -1, $menu = NULL) {
   $output = array();
   if ($menu_tree = theme('superfish_tree', $id, $menu_name, $mlid, $depth, $menu)) {
     if ($menu_tree['content']) {
-      $output['content'] = '<ul class="sf-menu sf-'. strtolower($type) .' sf-style-'. strtolower($style) .'" id="superfish-'. $id .'">'. $menu_tree['content'] .'</ul>'."\n";
+      $output['content'] = '<ul class="sf-menu sf-'. $type .' sf-style-'. $style .'" id="superfish-'. $id .'">'. $menu_tree['content'] .'</ul>'."\n";
       $output['subject'] = $menu_tree['subject'];
     }
   }
