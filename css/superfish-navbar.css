@@ -4,22 +4,24 @@
   height: 2.5em;
   padding-bottom: 2.5em !important;
   padding-left: 0 !important;
-  position:relative;
+  position: relative;
+  width: 100%;
+  z-index: 97;
 }
 .sf-navbar li {
-  position:static;
+  position: static;
 }
 .sf-navbar a {
-  border-top:none;
+  border-top: none;
 }
 .sf-navbar li ul {
-  width: 44em; /*IE6 soils itself without this*/
+  width: 100%; /*IE6 soils itself without this*/
 }
 .sf-navbar li li {
-  position:relative;
+  position: relative;
 }
 .sf-navbar li li ul {
-  width: 13em;
+  width: 14em;
 }
 .sf-navbar li li li {
   width: 100%;
@@ -44,9 +46,12 @@ ul.sf-navbar .current ul ul {
   font-weight: bold;
 }
 /*** Point all arrows down ***/
-/* Point right for anchors in subs */
-.sf-navbar ul .sf-sub-indicator { background-position: -10px -100px; }
-.sf-navbar ul a > .sf-sub-indicator { background-position: 0 -100px; }
+.sf-navbar ul .sf-sub-indicator {
+  background-position: -10px -100px;
+}
+.sf-navbar ul a > .sf-sub-indicator {
+background-position: 0 -100px;
+}
 /* Apply hovers to modern browsers */
 .sf-navbar ul a:focus > .sf-sub-indicator,
 .sf-navbar ul a:hover > .sf-sub-indicator,
@@ -54,6 +59,21 @@ ul.sf-navbar .current ul ul {
 .sf-navbar ul li:hover > a > .sf-sub-indicator,
 .sf-navbar ul li.sfHover > a > .sf-sub-indicator {
   background-position: -10px -100px; /* arrow hovers for modern browsers*/
+}
+/* Point right for anchors in subs */
+.sf-navbar ul ul .sf-sub-indicator {
+  background-position: -10px 0;
+}
+.sf-navbar ul ul a > .sf-sub-indicator {
+  background-position: 0 0;
+}
+/* Apply hovers to modern browsers */
+.sf-navbar ul ul a:focus > .sf-sub-indicator,
+.sf-navbar ul ul a:hover > .sf-sub-indicator,
+.sf-navbar ul ul a:active > .sf-sub-indicator,
+.sf-navbar ul ul li:hover > a > .sf-sub-indicator,
+.sf-navbar ul ul li.sfHover > a > .sf-sub-indicator {
+  background-position: -10px 0; /* arrow hovers for modern browsers*/
 }
 /*** Remove shadow on first submenu ***/
 .sf-navbar > li > ul {

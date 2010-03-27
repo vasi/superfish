@@ -1,7 +1,7 @@
 name = Superfish
-description = Superfish adds jQuery Superfish plugin to your Drupal menus.
+description = jQuery Superfish plugin for your Drupal menus.
 dependencies[] = menu
-version = "6.x-1.3"
+version = "6.x-1.4"
 core = "6.x"
 project = "superfish"
-datestamp = "1266239545"
+datestamp = "1269612965"

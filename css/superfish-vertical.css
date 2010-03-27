@@ -10,8 +10,12 @@
   top: 0;
 }
 /*** Alter arrow directions ***/
-.sf-vertical .sf-sub-indicator { background-position: -10px 0; } /* IE6 gets solid image only */
-.sf-vertical a > .sf-sub-indicator { background-position: 0 0; } /* use translucent arrow for modern browsers*/
+.sf-vertical .sf-sub-indicator {
+  background-position: -10px 0;
+} /* IE6 gets solid image only */
+.sf-vertical a > .sf-sub-indicator {
+  background-position: 0 0;
+} /* use translucent arrow for modern browsers*/
 /* Hover arrow direction for modern browsers*/
 .sf-vertical a:focus > .sf-sub-indicator,
 .sf-vertical a:hover > .sf-sub-indicator,

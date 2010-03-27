@@ -6,7 +6,7 @@
  *
  * A special thanks goes to Jake Gordon (jakeg)
  * and Addison Berry (add1sun) since some parts of
- * this file is written by them.
+ * this file are written by them.
  */
 
 /**
@@ -44,7 +44,7 @@ function superfish_help($path, $arg) {
  * Implementation of hook_block().
  */
 function superfish_block($op = 'list', $delta = 0, $edit = array()) {
-  global $user;
+  global $user, $language;
 
   switch ($op) {
     case 'list' :
@@ -79,14 +79,13 @@ function superfish_block($op = 'list', $delta = 0, $edit = array()) {
     $form['sf-settings']['superfish_depth_'. $delta] = array(
       '#type' => 'select',
       '#title' => t('Menu Depth'),
-      '#description' => t('The number of child levels starting with the parent selected above. -1 means all of them, 0 means none of them.'),
+      '#description' => t('The number of child levels starting with the parent selected above. <strong>-1</strong> means all of them, <strong>0</strong> means none of them.'),
       '#default_value' => variable_get('superfish_depth_'. $delta, -1),
       '#options' => drupal_map_assoc(range(-1, 5)),
     );
     $form['sf-settings']['superfish_type_'. $delta] = array(
       '#type' => 'select',
       '#title' => t('Menu Type'),
-      '#description' => t('There are 3 types of Superfish menus.<br /><b>Horizontal</b> which drops down.<br /><b>Vertical</b> which drops right.<br /><b>NavBar</b> which is a tab-based menu.'),
       '#default_value' => variable_get('superfish_type_'. $delta, 'Horizontal'),
       '#options' => array(
         'horizontal' => t('Horizontal'),
@@ -95,9 +94,8 @@ function superfish_block($op = 'list', $delta = 0, $edit = array()) {
     );
     $form['sf-settings']['superfish_style_'. $delta] = array(
       '#type' => 'select',
-      '#title' => t('Menu Style'),
+      '#title' => t('Style'),
       '#default_value' => variable_get('superfish_style_'. $delta, 'default'),
-      '#description' => t('Superfish modules has five different colour schemes in addition to the default purplish Superfish menu theme.'),
       '#options' => array(
         'default' => t('Default'),
         'blue' => t('Blue'),
@@ -129,7 +127,7 @@ function superfish_block($op = 'list', $delta = 0, $edit = array()) {
     $form['sf-settings']['superfish_delay_'. $delta] = array(
       '#type' => 'textfield',
       '#title' => t('Mouse delay'),
-      '#description' => t('The delay in <b>milliseconds</b> that the mouse can remain outside a sub-menu without it closing.'),
+      '#description' => t('The delay in <b>milliseconds</b> that the mouse can remain outside a sub-menu without it closing. <em>(Default: 1000)</em>'),
       '#default_value' => variable_get('superfish_delay_'. $delta, 1000),
       '#size' => 10,
     );
@@ -159,10 +157,16 @@ function superfish_block($op = 'list', $delta = 0, $edit = array()) {
         'true' => t('Yes'),
         'false' => t('No')),
     );
+    $form['sf-settings']['superfish_bgf_'. $delta] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Use jQuery BgiFrame plugin for this menu.'),
+      '#description' => t('Helps ease the pain when having to deal with IE z-index issues.'),
+      '#default_value' => variable_get('superfish_bgf_'. $delta, 0),
+    );
     $form['sf-settings']['sf-settings-supersubs'] = array(
       '#type' => 'fieldset',
       '#title' => t('Supersubs options'),
-      '#description' => t('<b>Supersubs</b> makes it possible to define custom widths for your menus. (Recommended)'),
+      '#description' => t('<b>Supersubs</b> makes it possible to define custom widths for your menus. <em>(Not working for NavBar menus)</em>'),
       '#collapsible' => TRUE,
       '#collapsed' => FALSE,
     );
@@ -174,16 +178,68 @@ function superfish_block($op = 'list', $delta = 0, $edit = array()) {
     $form['sf-settings']['sf-settings-supersubs']['superfish_minwidth_'. $delta] = array(
       '#type' => 'textfield',
       '#title' => t('Minimum width'),
-      '#description' => t('Minimum width of sub-menus in <b>em</b> units. '),
+      '#description' => t('Minimum width for sub-menus, in <b>em</b> units. <em>(Default: 12)</em>'),
       '#default_value' => variable_get('superfish_minwidth_'. $delta, '12'),
       '#size' => 20,
     );
     $form['sf-settings']['sf-settings-supersubs']['superfish_maxwidth_'. $delta] = array(
       '#type' => 'textfield',
       '#title' => t('Maximum width'),
-      '#description' => t('Maximum width of sub-menus in <b>em</b> units. '),
+      '#description' => t('Maximum width for sub-menus, in <b>em</b> units. <em>(Default: 27)</em>'),
       '#default_value' => variable_get('superfish_maxwidth_'. $delta, '27'),
       '#size' => 20,
+    );
+    $form['sf-settings']['sf-settings-css'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Advanced CSS settings'),
+      '#collapsible' => TRUE,
+      '#collapsed' => FALSE,
+    );
+    $form['sf-settings']['sf-settings-css']['superfish_firstlast_'. $delta] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Add <strong>first \ last</strong> classes to menu items.'),
+      '#default_value' => variable_get('superfish_firstlast_'. $delta, 1),
+    );
+    $form['sf-settings']['sf-settings-css']['superfish_zebra_'. $delta] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Add <strong>zebra striping</strong>. <em>(odd \ even)</em>'),
+      '#default_value' => variable_get('superfish_zebra_'. $delta, 1),
+    );
+    $form['sf-settings']['sf-settings-css']['superfish_dfirstlast_'. $delta] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Do <strong>not</strong> add <strong>first \ last</strong> classes to single menu items.'),
+      '#default_value' => variable_get('superfish_dfirstlast_'. $delta, 0),
+    );
+    $form['sf-settings']['sf-settings-css']['superfish_dzebra_'. $delta] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Do <strong>not</strong> add <strong>zebra striping</strong> to single menu items.'),
+      '#default_value' => variable_get('superfish_dfirstlast_'. $delta, 0),
+    );
+    $form['sf-settings']['sf-settings-css']['superfish_count_'. $delta] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Add item count class to menu items. <em>(sf-item-1, sf-item-2, sf-item-3, ...)</em>'),
+      '#default_value' => variable_get('superfish_count_'. $delta, 1),
+    );
+    $form['sf-settings']['sf-settings-css']['superfish_extraclass_'. $delta] = array(
+      '#type' => 'textfield',
+      '#title' => t('Extra class(es)'),
+      '#description' => t('Attach extra classes to this Superfish menu. <em>(Space separated, without dots)</em><br />Example: top-menu category-science'),
+      '#default_value' => variable_get('superfish_extraclass_'. $delta, ''),
+      '#size' => 40,
+    );
+    $form['sf-settings']['sf-settings-css']['superfish_extracss_'. $delta] = array(
+      '#type' => 'textfield',
+      '#title' => t('Extra CSS'),
+      '#description' => t('Include extra CSS file(s). <em>(Comma separate)</em><br />Example: sites/all/files/example.css'),
+      '#default_value' => variable_get('superfish_extracss_'. $delta, ''),
+      '#size' => 80,
+    );
+    $form['sf-settings']['sf-settings-css']['superfish_linkwrapper_'. $delta] = array(
+      '#type' => 'textfield',
+      '#title' => t('Wrapper'),
+      '#description' => t('Wrap HTML objects around hyperlinks. <em>(Comma separated)</em><br />Example: &lt;span class="background-left"&gt;&lt;span class="background-right"&gt;,&lt;/span&gt;&lt;/span&gt;'),
+      '#default_value' => variable_get('superfish_linkwrapper_'. $delta, ''),
+      '#size' => 80,
     );
     return $form;
   break;
@@ -203,6 +259,14 @@ function superfish_block($op = 'list', $delta = 0, $edit = array()) {
     variable_set('superfish_supersubs_'. $delta, $edit['superfish_supersubs_'. $delta]);
     variable_set('superfish_minwidth_'. $delta, $edit['superfish_minwidth_'. $delta]);
     variable_set('superfish_maxwidth_'. $delta, $edit['superfish_maxwidth_'. $delta]);
+    variable_set('superfish_firstlast_'. $delta, $edit['superfish_firstlast_'. $delta]);
+    variable_set('superfish_zebra_'. $delta, $edit['superfish_zebra_'. $delta]);
+    variable_set('superfish_dfirstlast_'. $delta, $edit['superfish_dfirstlast_'. $delta]);
+    variable_set('superfish_dzebra_'. $delta, $edit['superfish_dzebra_'. $delta]);
+    variable_set('superfish_count_'. $delta, $edit['superfish_count_'. $delta]);
+    variable_set('superfish_extraclass_'. $delta, $edit['superfish_extraclass_'. $delta]);
+    variable_set('superfish_extracss_'. $delta, $edit['superfish_extracss_'. $delta]);
+    variable_set('superfish_linkwrapper_'. $delta, $edit['superfish_linkwrapper_'. $delta]);
   break;
 
   case 'view' :
@@ -217,44 +281,72 @@ function superfish_block($op = 'list', $delta = 0, $edit = array()) {
     $shadow = variable_get('superfish_shadow_'. $delta, 'true');
     $arrow = variable_get('superfish_arrow_'. $delta, 'false');
     $supersubs = variable_get('superfish_supersubs_'. $delta, 1);
+    $firstlast = variable_get('superfish_firstlast_'. $delta, 1);
+    $zebra = variable_get('superfish_zebra_'. $delta, 1);
+    $dfirstlast = variable_get('superfish_dfirstlast_'. $delta, 0);
+    $dzebra = variable_get('superfish_dzebra_'. $delta, 0);
+    $count = variable_get('superfish_count_'. $delta, 1);
+    $extraclass = variable_get('superfish_extraclass_'. $delta, '');
+    $extracss = variable_get('superfish_extracss_'. $delta, '');
+    $linkwrapper = variable_get('superfish_linkwrapper_'. $delta, '');
 
-    global $language;
-    if ($language->direction == 1) {
-      $type .= ' rtl';
+    if ($type == 'navbar') {
+      $pathclass = "\n pathClass: 'active-trail',";
     }
 
     if ($style != 'default') {
         drupal_add_css(drupal_get_path('module', 'superfish') .'/css/extra/'. $style .'.css');
     }
 
-    // SuperSubs enabled? get the max\min widths and prepare the Javascript code
-    if ($supersubs == 1) {
-      $minwidth = variable_get('superfish_minwidth_'. $delta, '12');
-      $maxwidth = variable_get('superfish_maxwidth_'. $delta, '27');
-      $supersubs_javascript = "jQuery('ul#superfish-$delta').supersubs({\n minWidth: $minwidth,\n maxWidth: $maxwidth,\n extraWidth: 1\n});\n";
+    $animation = "animation: {";
+    if ($fade == 'true') {
+      $animation .= "opacity:'show',";
+    }
+    if ($slide == 'true') {
+      $animation .= "height:'show'";
+    }
+    else {
+      $animation .= "height:'false'";
+    }
+    $animation .= "},";
+
+    if ($bgiframe) {
+      $bgiframe = ".find('ul').bgIframe({opacity:false});";
     }
 
-    // Checking for any jQuery .animate(); stuffs
-    if ($fade == 'true' || $slide == 'true') {
-      $animation = "animation: {";
-      if ($fade == 'true') {
-        $animation .= "opacity:'show'";
+    // Supersubs enabled? get the max\min widths and prepare the Javascript code \ Of course if not a 'NavBar'
+    if ($supersubs == 1 && $type != 'navbar') {
+      $minwidth = variable_get('superfish_minwidth_'. $delta, '12');
+      $maxwidth = variable_get('superfish_maxwidth_'. $delta, '27');
+      $supersubs_javascript = ".supersubs({\n minWidth: ". $minwidth .",\n maxWidth: ". $maxwidth .",\n extraWidth: 1\n})";
+    }
+
+    if ($language->direction == 1) {
+      $type .= ' rtl';
+    }
+
+    if ($extraclass) {
+      $type .= " $extraclass";
+    }
+
+    if ($extracss) {
+      if (strpos($extracss, ',')) {
+        $extracss = explode(',', $extracss);
+        foreach ($extracss as $c) {
+          drupal_add_css($c);
+        }
       }
-      if ($fade == 'true' && $slide == 'true') {
-        $animation .= ',';
+      else {
+        drupal_add_css($extracss);
       }
-      if ($slide == 'true') {
-        $animation .= "height:'show'";
-      }
-      $animation .= "},";
     }
 
     // And finally assembling our js code
-    $javascript = "jQuery(function(){\n $supersubs_javascript jQuery('ul#superfish-$delta').superfish({\n pathClass: 'active',\n delay: $delay,\n $animation\n speed: '$speed',\n autoArrows: $arrow,\n dropShadows: $shadow\n}).find('ul').bgIframe({opacity:false});\n});";
+    $javascript = "$(document).ready(function(){\n $('ul#superfish-". $delta ."')". $supersubs_javascript .".superfish({". $pathclass ."\n delay: ". $delay .",\n". $animation ."\n speed: '". $speed ."',\n autoArrows: ". $arrow .",\n dropShadows: ". $shadow ."\n})". $bgiframe ."\n});";
 
     drupal_add_js($javascript, 'inline');
 
-    if ($output = theme('superfish', $delta, $menu_name, $mlid, $type, $style, $depth)) {
+    if ($output = theme('superfish', $delta, $menu_name, $mlid, $type, $style, $depth, $firstlast, $zebra, $dfirstlast, $dzebra, $count, $linkwrapper)) {
       $block['content'] = $output['content'];
       $block['subject'] = check_plain($subject);
     }
@@ -289,13 +381,13 @@ function superfish_init() {
 function superfish_theme() {
   return array(
     'superfish_tree' => array(
-        'arguments' => array('id' => NULL, 'menu_name' => NULL, 'mlid' => NULL, 'depth' => -1, 'menu' => NULL),
+      'arguments' => array('id' => NULL, 'menu_name' => NULL, 'mlid' => NULL, 'depth' => -1, 'firstlast' => NULL, 'zebra' => NULL, 'dfirstlast' => NULL, 'dzebra' => NULL, 'count' => NULL, 'linkwrapper' => NULL, 'menu' => NULL),
       ),
     'superfish_build' => array(
-        'arguments' => array('id' => NULL, 'menu' => NULL, 'depth' => -1, 'trail' => NULL),
+      'arguments' => array('id' => NULL, 'menu' => NULL, 'depth' => -1, 'trail' => NULL, 'firstlast' => NULL, 'zebra' => NULL, 'dfirstlast' => NULL, 'dzebra' => NULL, 'count' => NULL, 'linkwrapper' => NULL),
       ),
     'superfish' => array(
-      'arguments' => array('id' => NULL, 'menu_name' => NULL, 'mlid' => NULL, 'type' => 'horizontal', 'style' => 'Blue', 'depth' => -1, 'menu' => NULL),
+      'arguments' => array('id' => NULL, 'menu_name' => NULL, 'mlid' => NULL, 'type' => 'horizontal', 'style' => 'Blue', 'depth' => -1, 'firstlast' => NULL, 'zebra' => NULL, 'dfirstlast' => NULL, 'dzebra' => NULL, 'count' => NULL, 'linkwrapper' => NULL, 'menu' => NULL),
     )
   );
 }
@@ -319,14 +411,13 @@ function superfish_build_page_trail($page_menu) {
 /**
  * Builds the final Superfish.
  */
-function theme_superfish_tree($id, $menu_name, $mlid = NULL, $depth = -1, $menu = NULL) {
+function theme_superfish_tree($id, $menu_name, $mlid = NULL, $depth = -1, $firstlast = NULL, $zebra = NULL, $dfirstlast = NULL, $dzebra = NULL, $count = NULL, $linkwrapper = NULL, $menu = NULL) {
   $menu = isset($menu) ? $menu : menu_tree_all_data($menu_name);
   if (isset($menu)) {
     $page_menu = menu_tree_page_data($menu_name);
     $trail = superfish_build_page_trail($page_menu);
     unset($page_menu);
   }
-
   if (module_exists('i18nmenu')) {
     i18nmenu_localize_tree($menu);
   }
@@ -363,7 +454,7 @@ function theme_superfish_tree($id, $menu_name, $mlid = NULL, $depth = -1, $menu 
   if ($menu) {
     // Set the total menu depth counting from this parent if we need it.
     $depth =  ($depth > 0) ? ($parent_depth + $depth) : $depth;
-    $output['content'] .= theme('superfish_build', $id, $menu, $depth, $trail);
+    $output['content'] .= theme('superfish_build', $id, $menu, $depth, $trail, $firstlast, $zebra, $dfirstlast, $dzebra, $count, $linkwrapper);
   }
   return $output;
 }
@@ -371,35 +462,95 @@ function theme_superfish_tree($id, $menu_name, $mlid = NULL, $depth = -1, $menu 
 /**
  * Helper function that builds the nested lists of a Superfish menu.
  */
-function theme_superfish_build($id, $menu, $depth = -1, $trail = NULL) {
+function theme_superfish_build($id, $menu, $depth = -1, $trail = NULL, $firstlast = NULL, $zebra = NULL, $dfirstlast = NULL, $dzebra = NULL, $count = NULL, $linkwrapper = NULL) {
   $output = '';
+  $i = 1;
+  $num_items = array();
+
+  // How many items?
   foreach ($menu as $menu_item) {
+    if (!$menu_item['link']['hidden']) {
+      $num_items[] = $menu_item;
+    }
+  }
+  $num_items = count($num_items);
+
+  foreach ($menu as $menu_item) {
+    $class = array();
     $mlid = $menu_item['link']['mlid'];
     if ($menu_item['link']['hidden'] == 0) {
       if ($trail && in_array($mlid, $trail)) {
-        $class = ' active-trail';
+        $class[] = 'active-trail';
       }
+
+      if ($dfirstlast == 1 && $num_items == 1) {
+        $firstlast = 0;
+      }
+
+      if ($dzebra == 1 && $num_items == 1) {
+        $zebra = 0;
+      }
+
+      // Adding first\last classes
+      if ($firstlast == 1) {
+        if ($i == 1) {
+          $class[] = 'first';
+        }
+        if ($i == $num_items) {
+          $class[] = 'last';
+        }
+      }
+
+      // Adding zebra striping
+      if ($zebra == 1) {
+        if ($i % 2) {
+          $class[] = 'odd';
+        }
+        else {
+          $class[] = 'even';
+        }
+      }
+
+      // Adding item count class
+      if ($count == 1) {
+        $class[] = 'sf-item-'. $i;
+      }
+
+      $class = implode(' ', $class);
+      $i++;
+
       if ((!empty($menu_item['link']['has_children'])) && (!empty($menu_item['below'])) && $depth != 0) {
-        $children = theme('superfish_build', $id, $menu_item['below'], $depth, $trail);
-        $parent_class = $children ? 'menuparent ' : '';
+        $children = theme('superfish_build', $id, $menu_item['below'], $depth, $trail, $firstlast, $zebra, $dfirstlast, $dzebra, $count, $linkwrapper);
+        if ($children) {
+          // To avoid a useless blank space
+          if ($class) {
+            $class .= ' menuparent';
+          }
+          else {
+            $class = 'menuparent';
+          }
+        }
         $output .= '<li id="menu-'. $mlid .'-'. $id .'"';
-        if (!empty($parent_class) || !empty($class)) {
-          $output .= ' class="'. $parent_class . $class .'"';
+        if ($class) {
+          $output .= ' class="'. $class .'"';
         }
         $output .= '>'. theme('menu_item_link', $menu_item['link']);
         if ($menu_item['link']['depth'] <= $depth || $depth == -1) {
           if ($children) {
-            $output .= "<ul>\n $children \n</ul>\n";
+            $output .= "\n<ul>\n". $children ."</ul>\n";
           }
         }
         $output .= "</li>\n";
       }
       else {
         $output .= '<li id="menu-'. $mlid .'-'. $id .'"';
-        if (!empty($class)) {
+        if ($class) {
           $output .= ' class="'. $class .'"';
         }
-        $output .= '>'. theme('menu_item_link', $menu_item['link']) .'</li>'."\n";
+        if ($linkwrapper && strpos($linkwrapper, ',')) {
+          $lw = explode(',', $linkwrapper);
+        }
+        $output .= '>'. $lw[0] . theme('menu_item_link', $menu_item['link']) . $lw[1] .'</li>'."\n";
       }
     }
   }
@@ -409,11 +560,11 @@ function theme_superfish_build($id, $menu, $depth = -1, $trail = NULL) {
 /**
  * Theme function to allow any menu tree to be themed as a Superfish menu.
  */
-function theme_superfish($id, $menu_name, $mlid, $type = 'horizontal', $style = 'Blue', $depth = -1, $menu = NULL) {
+function theme_superfish($id, $menu_name, $mlid, $type = 'horizontal', $style = 'Blue', $depth = -1, $firstlast = NULL, $zebra = NULL, $dfirstlast = NULL, $dzebra = NULL, $count = NULL, $linkwrapper = NULL, $menu = NULL) {
   $output = array();
-  if ($menu_tree = theme('superfish_tree', $id, $menu_name, $mlid, $depth, $menu)) {
+  if ($menu_tree = theme('superfish_tree', $id, $menu_name, $mlid, $depth, $firstlast, $zebra, $dfirstlast, $dzebra, $count, $linkwrapper, $menu)) {
     if ($menu_tree['content']) {
-      $output['content'] = '<ul class="sf-menu sf-'. $type .' sf-style-'. $style .'" id="superfish-'. $id .'">'. $menu_tree['content'] .'</ul>'."\n";
+      $output['content'] = '<ul class="sf-menu sf-'. $type .' sf-style-'. $style .'" id="superfish-'. $id .'">'."\n". $menu_tree['content'] .'</ul>'."\n";
       $output['subject'] = $menu_tree['subject'];
     }
   }
