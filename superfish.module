@@ -275,7 +275,7 @@ function superfish_block($op = 'list', $delta = 0, $edit = array()) {
     variable_set('superfish_extracss_'. $delta, $edit['superfish_extracss_'. $delta]);
     variable_set('superfish_linkwrapper_'. $delta, $edit['superfish_linkwrapper_'. $delta]);
     variable_set('superfish_linktextwrapper_'. $delta, $edit['superfish_linktextwrapper_'. $delta]);
-	variable_set('superfish_mulwrapper_'. $delta, $edit['superfish_mulwrapper_'. $delta]);
+    variable_set('superfish_mulwrapper_'. $delta, $edit['superfish_mulwrapper_'. $delta]);
   break;
 
   case 'view' :
@@ -299,7 +299,7 @@ function superfish_block($op = 'list', $delta = 0, $edit = array()) {
     $extracss = variable_get('superfish_extracss_'. $delta, '');
     $linkwrapper = variable_get('superfish_linkwrapper_'. $delta, '');
     $linktextwrapper = variable_get('superfish_linktextwrapper_'. $delta, '');
-	$mulwrapper = variable_get('superfish_mulwrapper_'. $delta, '');
+    $mulwrapper = variable_get('superfish_mulwrapper_'. $delta, '');
 
     if ($type == 'navbar') {
       $pathclass = "\n pathClass: 'active-trail',";
@@ -484,12 +484,12 @@ function theme_superfish_build($id, $menu, $depth = -1, $trail = NULL, $firstlas
         $class[] = 'active-trail';
       }
 
-	  // If enabaled, no single menu item gets first\last classes
+      // If enabaled, no single menu item gets first\last classes
       if ($dfirstlast == 1 && $num_items == 1) {
         $firstlast = 0;
       }
 
-	  // If enabled, no single menu item gets zebra striping
+      // If enabled, no single menu item gets zebra striping
       if ($dzebra == 1 && $num_items == 1) {
         $zebra = 0;
       }
@@ -574,9 +574,9 @@ function theme_superfish($id, $menu_name, $mlid, $type = 'horizontal', $style = 
   $output = array();
   if ($menu_tree = theme('superfish_tree', $id, $menu_name, $mlid, $depth, $firstlast, $zebra, $dfirstlast, $dzebra, $count, $linkwrapper, $linktextwrapper, $menu)) {
     if ($menu_tree['content']) {
-	  if ($mulwrapper && strpos($mulwrapper, ',')) {
+      if ($mulwrapper && strpos($mulwrapper, ',')) {
         $mulw = explode(',', $mulwrapper);
-	  }
+      }
       $output['content'] = $mulw[0] . '<ul class="sf-menu sf-'. $type .' sf-style-'. $style .'" id="superfish-'. $id .'">'."\n". $menu_tree['content'] .'</ul>'. $mulw[1] ."\n";
       $output['subject'] = $menu_tree['subject'];
     }
