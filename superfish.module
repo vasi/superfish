@@ -185,7 +185,7 @@ function superfish_block($op = 'list', $delta = 0, $edit = array()) {
       '#type' => 'fieldset',
       '#title' => t('Advanced CSS settings'),
       '#collapsible' => TRUE,
-      '#collapsed' => FALSE,
+      '#collapsed' => TRUE,
     );
     $form['sf-settings']['sf-settings-css']['superfish_firstlast_'. $delta] = array(
       '#type' => 'checkbox',
@@ -218,34 +218,39 @@ function superfish_block($op = 'list', $delta = 0, $edit = array()) {
       '#description' => t('Attach extra classes to this Superfish menu. <em>(Space separated, without dots)</em><br />Example: top-menu category-science'),
       '#default_value' => variable_get('superfish_extraclass_'. $delta, ''),
       '#size' => 50,
+      '#maxlength' => 1000,
     );
     $form['sf-settings']['sf-settings-css']['superfish_extracss_'. $delta] = array(
       '#type' => 'textfield',
       '#title' => t('Extra CSS'),
-      '#description' => t('Include extra CSS file(s). <em>(Comma separate)</em><br />Example: sites/all/files/example.css'),
+      '#description' => t('Include extra CSS file(s). <em>(Comma separate)</em><br />Example: <ul><li>sites/all/files/example.css</li><li>sites/all/files/example.css,sites/all/files/example2.css</li></ul>'),
       '#default_value' => variable_get('superfish_extracss_'. $delta, ''),
       '#size' => 100,
+      '#maxlength' => 1000,
     );
     $form['sf-settings']['sf-settings-css']['superfish_linkwrapper_'. $delta] = array(
       '#type' => 'textfield',
       '#title' => t('Wrapper > Hyperlinks'),
-      '#description' => t('Wrap HTML objects around hyperlinks. <em>(Comma separated)</em><br />Examples: <ul><li>&lt;span class="background-left"&gt;&lt;span class="background-right"&gt;,&lt;/span&gt;&lt;/span&gt;</li><li>&lt;img src="example.jpg" width="24" height="24" alt="example" title="example" /&gt;,</li><li>,&lt;span class="custom-arrow"&gt;>&lt;/span&gt;</li></ul>'),
+      '#description' => t('Insert HTML objects <strong>before</strong> and\or <strong>after</strong> hyperlinks. <em>(Comma separated)</em><br />Examples: <ul><li>&lt;span class="background-left"&gt;&lt;span class="background-right"&gt;,&lt;/span&gt;&lt;/span&gt;</li><li>&lt;img src="example.jpg" width="24" height="24" alt="example" title="example" /&gt;,</li><li>,&lt;span class="custom-arrow"&gt;>&lt;/span&gt;</li></ul>'),
       '#default_value' => variable_get('superfish_linkwrapper_'. $delta, ''),
       '#size' => 100,
+      '#maxlength' => 1000,
     );
     $form['sf-settings']['sf-settings-css']['superfish_linktextwrapper_'. $delta] = array(
       '#type' => 'textfield',
       '#title' => t('Wrapper > Hyperlinks text'),
-      '#description' => t('Wrap HTML objects around the text in the hyperlinks. <em>(Comma separated)</em><br />Examples: <ul><li>&lt;span class="background-left"&gt;&lt;span class="background-right"&gt;,&lt;/span&gt;&lt;/span&gt;</li><li>&lt;img src="example.jpg" width="24" height="24" alt="example" title="example" /&gt;,</li><li>,&lt;span class="custom-arrow"&gt;>&lt;/span&gt;</li></ul>'),
+      '#description' => t('Insert extra codes <strong>before</strong> and\or <strong>after</strong> the text in hyperlinks. <em>(Comma separated)</em><br />Examples: <ul><li>&lt;span class="background-left"&gt;&lt;span class="background-right"&gt;,&lt;/span&gt;&lt;/span&gt;</li><li>&lt;img src="example.jpg" width="24" height="24" alt="example" title="example" /&gt;,</li><li>,&lt;span class="custom-arrow"&gt;>&lt;/span&gt;</li></ul>'),
       '#default_value' => variable_get('superfish_linktextwrapper_'. $delta, ''),
       '#size' => 100,
+      '#maxlength' => 1000,
     );
     $form['sf-settings']['sf-settings-css']['superfish_mulwrapper_'. $delta] = array(
       '#type' => 'textfield',
       '#title' => t('Wrapper > Main UL'),
-      '#description' => t('Insert extra codes <strong>before</strong> and\or <strong>after</strong> the main UL. <em>(Comma separate)</em>.<br />Examples: <ul><li>&lt;h3&gt;Discover the universe!&lt;/h3&gt;,</li><li>&lt;h3&gt;Hello there!&lt;/h3&gt;,&lt;div style="clear:both"&gt;&lt;/div&gt;</li><li>&lt;div class="example"&gt;,&lt;/div&gt;</li></ul>'),
+      '#description' => t('Insert extra codes <strong>before</strong> and\or <strong>after</strong> the main UL. <em>(Comma separated)</em>.<br />Examples: <ul><li>&lt;h3&gt;Discover the universe!&lt;/h3&gt;,</li><li>&lt;h3&gt;Hello there!&lt;/h3&gt;,&lt;div style="clear:both"&gt;&lt;/div&gt;</li><li>,&lt;div style="clear:both"&gt;&lt;/div&gt;</li></ul>'),
       '#default_value' => variable_get('superfish_mulwrapper_'. $delta, ''),
       '#size' => 100,
+      '#maxlength' => 1000,
     );
 
     return $form;
@@ -301,17 +306,13 @@ function superfish_block($op = 'list', $delta = 0, $edit = array()) {
     $linktextwrapper = variable_get('superfish_linktextwrapper_'. $delta, '');
     $mulwrapper = variable_get('superfish_mulwrapper_'. $delta, '');
 
-    if ($type == 'navbar') {
-      $pathclass = "\n pathClass: 'active-trail',";
-    }
+    $pathclass = ($type == 'navbar') ? "\n pathClass: 'active-trail'," : '';
 
     if ($style != 'default') {
         drupal_add_css(drupal_get_path('module', 'superfish') .'/css/extra/'. $style .'.css');
     }
 
-    if ($slide == 'true') {
-      $animation = "animation: {opacity:'show',height:'show'},";
-    }
+    $animation = ($slide == 'true') ? "animation: {opacity:'show',height:'show'}," : '';
     
     $bgiframe = ($bgiframe == 1) ? ".find('ul').bgIframe({opacity:false});" : '';
 
@@ -322,13 +323,9 @@ function superfish_block($op = 'list', $delta = 0, $edit = array()) {
       $supersubs_javascript = ".supersubs({\n minWidth: ". $minwidth .",\n maxWidth: ". $maxwidth .",\n extraWidth: 1\n})";
     }
 
-    if ($language->direction == 1) {
-      $type .= ' rtl';
-    }
+    $type = ($language->direction == 1) ? $type .' rtl' : $type;
 
-    if ($extraclass) {
-      $type .= " $extraclass";
-    }
+    $type = ($extraclass) ? $type .' '. $extraclass : $type;
 
     if ($extracss) {
       if (strpos($extracss, ',')) {
@@ -522,14 +519,24 @@ function theme_superfish_build($id, $menu, $depth = -1, $trail = NULL, $firstlas
       $class = implode(' ', $class);
       $i++;
 
-      if ($linkwrapper && strpos($linkwrapper, ',')) {
+      // Wrapping hyperlinks
+      if ($linkwrapper && strpos($linkwrapper, ',') !== FALSE) {
         $lw = explode(',', $linkwrapper);
+        // In case you just wanted to add something after the element.
+        if (substr($linkwrapper, 0) == ',') {
+          array_unshift($lw, '');
+        }
       }
 
-      if ($linktextwrapper && strpos($linktextwrapper, ',')) {
+      // Wrapping link texts
+      if ($linktextwrapper && strpos($linktextwrapper, ',') !== FALSE) {
         $ltw = explode(',', $linktextwrapper);
+        // The same as above
+        if (substr($linktextwrapper, 0) == ',') {
+          array_unshift($ltw, '');
+        }
         $menu_item['link']['title'] = $ltw[0] . check_plain($menu_item['link']['title']) . $ltw[1];
-        $menu_item['link']['html'] = TRUE;
+        $menu_item['link']['localized_options']['html'] = TRUE;
       }
 
       if ((!empty($menu_item['link']['has_children'])) && (!empty($menu_item['below'])) && $depth != 0) {
@@ -547,7 +554,7 @@ function theme_superfish_build($id, $menu, $depth = -1, $trail = NULL, $firstlas
         if ($class) {
           $output .= ' class="'. $class .'"';
         }
-        $output .= '>'. $lw[0] . l($menu_item['link']['title'], $menu_item['link']['href'], $menu_item['link']) . $lw[1];
+        $output .= '>'. $lw[0] . theme('menu_item_link', $menu_item['link']) . $lw[1];
         if ($menu_item['link']['depth'] <= $depth || $depth == -1) {
           if ($children) {
             $output .= "\n<ul>\n". $children ."</ul>\n";
@@ -560,7 +567,7 @@ function theme_superfish_build($id, $menu, $depth = -1, $trail = NULL, $firstlas
         if ($class) {
           $output .= ' class="'. $class .'"';
         }
-        $output .= '>'. $lw[0] . l($menu_item['link']['title'], $menu_item['link']['href'], $menu_item['link']) . $lw[1] .'</li>'."\n";
+        $output .= '>'. $lw[0] . theme('menu_item_link', $menu_item['link']) . $lw[1] .'</li>'."\n";
       }
     }
   }
@@ -574,8 +581,13 @@ function theme_superfish($id, $menu_name, $mlid, $type = 'horizontal', $style = 
   $output = array();
   if ($menu_tree = theme('superfish_tree', $id, $menu_name, $mlid, $depth, $firstlast, $zebra, $dfirstlast, $dzebra, $count, $linkwrapper, $linktextwrapper, $menu)) {
     if ($menu_tree['content']) {
-      if ($mulwrapper && strpos($mulwrapper, ',')) {
+      // Wrapping main UL
+      if ($mulwrapper && strpos($mulwrapper, ',') !== FALSE) {
         $mulw = explode(',', $mulwrapper);
+        // In case you just wanted to add something after the element.
+        if (substr($mulwrapper, 0) == ',') {
+          array_unshift($mulw, '');
+        }
       }
       $output['content'] = $mulw[0] . '<ul class="sf-menu sf-'. $type .' sf-style-'. $style .'" id="superfish-'. $id .'">'."\n". $menu_tree['content'] .'</ul>'. $mulw[1] ."\n";
       $output['subject'] = $menu_tree['subject'];
