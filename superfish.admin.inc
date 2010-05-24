@@ -1,27 +1,38 @@
 <?php // $Id$
+
 /**
- * @file superfish.admin.inc
+ * @file
  * Functions that are only called on the admin pages.
  */
 
 /**
  * Overriding system settings form.
  */
-function superfish_system_settings_form($form) {
-  $form['buttons']['submit'] = array('#type' => 'submit', '#value' => t('Save configuration') );
+function superfish_system_settings_form($form, $automatic_defaults = TRUE) {
+  $form['actions']['#type'] = 'container';
+  $form['actions']['#attributes']['class'][] = 'form-actions';
+  $form['actions']['#weight'] = 100;
+  $form['actions']['submit'] = array('#type' => 'submit', '#value' => t('Save configuration'));
+
+  if ($automatic_defaults) {
+    $form = _system_settings_form_automatic_defaults($form);
+  }
 
   if (!empty($_POST) && form_get_errors()) {
     drupal_set_message(t('The settings have not been saved because of the errors.'), 'error');
   }
   $form['#submit'][] = 'system_settings_form_submit';
-  $form['#theme'] = 'system_settings_form';
+  // By default, render the form using theme_system_settings_form().
+  if (!isset($form['#theme'])) {
+    $form['#theme'] = 'system_settings_form';
+  }
   return $form;
 }
- 
+
 /**
  * Module settings form.
  */
-function superfish_menu_settings() {
+function superfish_admin_settings() {
   $form['superfish_number'] = array(
     '#type' => 'select',
     '#title' => t('Number of blocks'),
@@ -76,5 +87,5 @@ function superfish_menu_settings() {
     '#title' => t('Enable hoverIntent detection.'),
     '#default_value' => variable_get('superfish_hid', 1),
   );
-  return superfish_system_settings_form($form);
+  return superfish_system_settings_form($form, FALSE);
 }
