@@ -1,3 +1,25 @@
+Version 1.9-beta, 2011-03-23
+----------------------
+- #714624, #717862, #790576: [Improvement] Superfish.css
+- #798722: [New feature] Path to Superfish library.
+- #801238: [Improvement] "middle" class added.
+- #849566: [Improvement] "neutral" style added.
+- #866006: [New feature] jQuery Supposition plugin added and heavily heavily modified.
+- #906038: [New feature] Multi-column sub-menus.
+- #913548: Admin form tweaks.
+- #929146: [Fixed]
+- #959210, #1031024 [New feature] jQuery sf-Touchscreen plugin, built and added.
+- #975182: [Improvement] hook_uninstall added.
+- #993322, #1002766: [Improvement] "Item depth" class added.
+- [New feature] New slide-in effects.
+- [Improvement] Menu caching added using a patch originally provided for NiceMenus.
+- [Improvement] hoverIntent moved to block settings.
+- [Improvement] Superfish.css
+- [Improvement] Blocks number in the admin form.
+- [Improvement] Usability improvements in block settings.
+- [Improvement] Supersubs now workgin with NavBar.
+- [Improvement] Speed option now accepting time in milliseconds.
+- [Improvement] Superfish admin form.
 
 Version 1.6, 2010-04-12
 ----------------------
@@ -32,8 +54,3 @@ Version 1.1, 2010-02-12
 Version 1.0, 2010-02-12
 ---------------------
 - Initial release.
-
-
-
-
-
