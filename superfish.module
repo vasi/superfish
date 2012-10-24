@@ -58,8 +58,34 @@ function superfish_block_configure($delta = 0) {
   $form = array();
   $form['superfish_name_' . $delta] = array(
     '#type' => 'textfield',
-    '#title' => t('Menu Name'),
+    '#title' => t('Block description'),
+    '#description' => t('A brief description of your block. Used on the <a href="@overview">Blocks administration page</a>.', array('@overview' => url('admin/structure/block'))),
     '#default_value' => variable_get('superfish_name_' . $delta, 'Superfish ' . $delta),
+  );
+  $form['sf-menu'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Menu'),
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+  );
+  $form['sf-menu']['superfish_menu_' . $delta] = array(
+    '#type' => 'select',
+    '#title' => t('Menu parent'),
+    '#description' => t('The menu you want to be displayed using Superfish.') . ' <em>(' . t('Default') . ': -- Administration)</em>',
+    '#default_value' => variable_get('superfish_menu_' . $delta, 'management:1'),
+    '#options' => menu_parent_options(menu_get_menus(), array('mlid' => 0)),
+  );
+  $form['sf-menu']['superfish_depth_' . $delta] = array(
+    '#type' => 'select',
+    '#title' => t('Menu depth'),
+    '#description' => t('The number of child levels starting with the parent selected above. <strong>-1</strong> means all of them, <strong>0</strong> means none of them.') . ' <em>(' . t('Default') . ': -1)</em>',
+    '#default_value' => variable_get('superfish_depth_' . $delta, -1),
+    '#options' => drupal_map_assoc(range(-1, 50)),
+  );
+  $form['sf-menu']['superfish_expanded_' . $delta] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Take "Expanded" option into effect.'),
+    '#default_value' => variable_get('superfish_expanded_' . $delta, 0),
   );
   $form['sf-settings'] = array(
     '#type' => 'fieldset',
@@ -67,29 +93,10 @@ function superfish_block_configure($delta = 0) {
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
   );
-  $form['sf-settings']['superfish_menu_' . $delta] = array(
-    '#type' => 'select',
-    '#title' => t('Menu Parent'),
-    '#description' => t('The menu you want to be displayed using Superfish.'),
-    '#default_value' => variable_get('superfish_menu_' . $delta, 'main-menu:0'),
-    '#options' => menu_parent_options(menu_get_menus(), array('mlid' => 0)),
-  );
-  $form['sf-settings']['superfish_depth_' . $delta] = array(
-    '#type' => 'select',
-    '#title' => t('Menu Depth'),
-    '#description' => t('The number of child levels starting with the parent selected above. <strong>-1</strong> means all of them, <strong>0</strong> means none of them.'),
-    '#default_value' => variable_get('superfish_depth_' . $delta, -1),
-    '#options' => drupal_map_assoc(range(-1, 10)),
-  );
-  $form['sf-settings']['superfish_expanded_' . $delta] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Take "Expanded" option into effect.'),
-    '#default_value' => variable_get('superfish_expanded_' . $delta, 0),
-  );
   $form['sf-settings']['superfish_type_' . $delta] = array(
     '#type' => 'select',
     '#title' => t('Menu Type'),
-    '#default_value' => variable_get('superfish_type_' . $delta, 'Horizontal'),
+    '#default_value' => variable_get('superfish_type_' . $delta, 'horizontal'),
     '#options' => array(
       'horizontal' => t('Horizontal'),
       'vertical' => t('Vertical'),
@@ -105,35 +112,35 @@ function superfish_block_configure($delta = 0) {
   $form['sf-settings']['superfish_speed_' . $delta] = array(
     '#type' => 'textfield',
     '#title' => t('Animation speed'),
-    '#description' => t('The speed of the animation either in <strong>milliseconds</strong> or pre-defined values (<strong>slow, normal, fast</strong>). <em>(Default: fast)</em>'),
+    '#description' => t('The speed of the animation either in <strong>milliseconds</strong> or pre-defined values (<strong>slow, normal, fast</strong>).') . ' <em>(' . t('Default') . ': fast)</em>',
     '#default_value' => variable_get('superfish_speed_' . $delta, 'fast'),
-    '#size' => 10,
+    '#size' => 15,
   );
   $form['sf-settings']['superfish_delay_' . $delta] = array(
     '#type' => 'textfield',
     '#title' => t('Mouse delay'),
-    '#description' => t('The delay in <strong>milliseconds</strong> that the mouse can remain outside a sub-menu without it closing. <em>(Default: 800)</em>'),
+    '#description' => t('The delay in <strong>milliseconds</strong> that the mouse can remain outside a sub-menu without it closing.') . ' <em>(' . t('Default') . ': 800)</em>',
     '#default_value' => variable_get('superfish_delay_' . $delta, 800),
-    '#size' => 10,
+    '#size' => 15,
   );
   $form['sf-settings']['superfish_pathclass_' . $delta] = array(
     '#type' => 'textfield',
     '#title' => t('Path class'),
-    '#description' => t('The class you have applied to list items that lead to the current page. <em>(Default: active-trail)</em>'),
+    '#description' => t('The class you have applied to list items that lead to the current page.') . ' <em>(' . t('Default') . ': active-trail)</em>',
     '#default_value' => variable_get('superfish_pathclass_' . $delta, 'active-trail'),
-    '#size' => 10,
+    '#size' => 15,
   );
   $form['sf-settings']['superfish_pathlevels_' . $delta] = array(
     '#type' => 'select',
     '#title' => t('Path levels'),
-    '#description' => t('The number of levels of submenus that remain open or are restored using <strong>Path class</strong>. <em>(Default: 1)</em>'),
+    '#description' => t('The number of levels of submenus that remain open or are restored using <strong>Path class</strong>.') . ' <em>(' . t('Default') . ': 1)</em>',
     '#default_value' => variable_get('superfish_pathlevels_' . $delta, 1),
     '#options' => drupal_map_assoc(range(0, 10)),
   );
   $form['sf-settings']['superfish_slide_' . $delta] = array(
     '#type' => 'select',
     '#title' => t('Slide-in effect'),
-    '#default_value' => variable_get('superfish_slide_' . $delta, 'none'),
+    '#default_value' => variable_get('superfish_slide_' . $delta, 'vertical'),
     '#options' => array(
       'none' => t('None'),
       'vertical' => t('Vertical'),
@@ -141,15 +148,15 @@ function superfish_block_configure($delta = 0) {
       'diagonal' => t('Diagonal')
     ),
   );
+  $form['sf-settings']['superfish_arrow_' . $delta] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Auto-arrows'),
+    '#default_value' => variable_get('superfish_arrow_' . $delta, 1),
+  );
   $form['sf-settings']['superfish_shadow_' . $delta] = array(
     '#type' => 'checkbox',
     '#title' => t('Drop shadows'),
     '#default_value' => variable_get('superfish_shadow_' . $delta, 1),
-  );
-  $form['sf-settings']['superfish_arrow_' . $delta] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Auto-arrows'),
-    '#default_value' => variable_get('superfish_arrow_' . $delta, 0),
   );
   $form['sf-plugins'] = array(
     '#type' => 'fieldset',
@@ -167,7 +174,7 @@ function superfish_block_configure($delta = 0) {
     '#type' => 'checkbox',
     '#title' => t('Use jQuery Supposition plugin for this menu.') . ' <sup>(' . t('Beta') . ')</sup>',
     '#description' => t('Relocates sub-menus when they would otherwise appear outside the browser window area.'),
-    '#default_value' => variable_get('superfish_spp_' . $delta, 0),
+    '#default_value' => variable_get('superfish_spp_' . $delta, 1),
   );
   $form['sf-plugins']['superfish_hid_' . $delta] = array(
     '#type' => 'checkbox',
@@ -195,7 +202,7 @@ function superfish_block_configure($delta = 0) {
   $form['sf-plugins']['sf-touchscreen']['superfish_touchual_' . $delta] = array(
     '#type' => 'textfield',
     '#title' => t('User agents'),
-    '#description' => t('Could be partial or complete. (Asterisk separated)') . '<br />' . t('Examples') . ': <ul><li>iPhone*Android*iPad</li><li>Mozilla/5.0 (webOS/1.4.0; U; en-US) AppleWebKit/532.2 (KHTML, like Gecko) Version/1.0 Safari/532.2 Pre/1.0 * Mozilla/5.0 (iPad; U; CPU OS 3_2_1 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Mobile/7B405</li></ul>',
+    '#description' => t('Could be partial or complete. (Asterisk separated)') . '<em>(' . t('Default') . ': ' . t('empty') . ')</em><br />' . t('Examples') . ': <ul><li>iPhone*Android*iPad</li><li>Mozilla/5.0 (webOS/1.4.0; U; en-US) AppleWebKit/532.2 (KHTML, like Gecko) Version/1.0 Safari/532.2 Pre/1.0 * Mozilla/5.0 (iPad; U; CPU OS 3_2_1 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Mobile/7B405</li></ul>',
     '#default_value' => variable_get('superfish_touchual_' . $delta, ''),
     '#size' => 100,
   );
@@ -214,14 +221,14 @@ function superfish_block_configure($delta = 0) {
   $form['sf-plugins']['sf-supersubs']['superfish_minwidth_' . $delta] = array(
     '#type' => 'textfield',
     '#title' => t('Minimum width'),
-    '#description' => t('Minimum width for sub-menus, in <strong>em</strong> units. <em>(Default: 12)</em>'),
+    '#description' => t('Minimum width for sub-menus, in <strong>em</strong> units.') . ' <em>(' . t('Default') . ': 12)</em>',
     '#default_value' => variable_get('superfish_minwidth_' . $delta, '12'),
     '#size' => 20,
   );
   $form['sf-plugins']['sf-supersubs']['superfish_maxwidth_' . $delta] = array(
     '#type' => 'textfield',
     '#title' => t('Maximum width'),
-    '#description' => t('Maximum width for sub-menus, in <strong>em</strong> units. <em>(Default: 27)</em>'),
+    '#description' => t('Maximum width for sub-menus, in <strong>em</strong> units.') . ' <em>(' . t('Default') . ': 27)</em>',
     '#default_value' => variable_get('superfish_maxwidth_' . $delta, '27'),
     '#size' => 20,
   );
@@ -239,21 +246,21 @@ function superfish_block_configure($delta = 0) {
   $form['sf-megamenu']['superfish_mcexclude_' . $delta] = array(
     '#type' => 'textfield',
     '#title' => t('Exclude below menu items'),
-    '#description' => t('Enter the ID number of the parent menus item you <strong>do not</strong> want multi-column sub-menus for. (Comma separated)<br />Example: 5,10,20'),
+    '#description' => t('Enter the ID number of the parent menus item you <strong>do not</strong> want multi-column sub-menus for. (Comma separated)') . ' <em>(' . t('Default') . ': 1)</em><br />' . t('Example') . ': 5,10,20',
     '#default_value' => variable_get('superfish_mcexclude_' . $delta, ''),
     '#size' => 50,
   );
   $form['sf-megamenu']['superfish_mcdepth_' . $delta] = array(
     '#type' => 'select',
     '#title' => t('Start from depth'),
-    '#description' => t('The depth of the first instance of multi-column sub-menus. <em>(Default: 1)</em>'),
+    '#description' => t('The depth of the first instance of multi-column sub-menus.') . ' <em>(' . t('Default') . ': 1)</em>',
     '#default_value' => variable_get('superfish_mcdepth_' . $delta, 1),
     '#options' => drupal_map_assoc(range(1, 10)),
   );
   $form['sf-megamenu']['superfish_mclevels_' . $delta] = array(
     '#type' => 'select',
     '#title' => t('Levels'),
-    '#description' => t('The number of levels of sub-menus that will be included in the multi-column sub-menu. <em>(Default: 1)</em>'),
+    '#description' => t('The number of levels of sub-menus that will be included in the multi-column sub-menu.') . ' <em>(' . t('Default') . ': 1)</em>',
     '#default_value' => variable_get('superfish_mclevels_' . $delta, 1),
     '#options' => drupal_map_assoc(range(1, 10)),
   );
@@ -277,14 +284,14 @@ function superfish_block_configure($delta = 0) {
   $form['sf-advanced-html']['sf-hyperlinks']['superfish_hldmenus_' . $delta] = array(
     '#type' => 'textfield',
     '#title' => t('Limit to below menu items'),
-    '#description' => t('Enter menu item ID\'s. Leave empty to include all menus. (Comma separated) <em>(Default: empty)</em><br />Example: 5,10,20'),
+    '#description' => t('Enter menu item ID\'s. Leave empty to include all menus. (Comma separated)') . ' <em>(' . t('Default') . ': ' . t('empty') . ')</em><br />' . t('Example') . ': 5,10,20',
     '#default_value' => variable_get('superfish_hldmenus_' . $delta, ''),
     '#size' => 50,
   );
   $form['sf-advanced-html']['sf-hyperlinks']['superfish_hldexclude_' . $delta] = array(
     '#type' => 'textfield',
     '#title' => t('Exclude below menu items'),
-    '#description' => t('Enter the ID of the menu items you <strong>do not</strong> want to link descriptions for. (Comma separated)<br />Example: 5,10,20'),
+    '#description' => t('Enter the ID of the menu items you <strong>do not</strong> want to link descriptions for. (Comma separated)') . ' <em>(' . t('Default') . ': ' . t('empty') . ')</em><br />' . t('Example') . ': 5,10,20',
     '#default_value' => variable_get('superfish_hldexclude_' . $delta, ''),
     '#size' => 50,
   );
@@ -297,7 +304,7 @@ function superfish_block_configure($delta = 0) {
   $form['sf-advanced-html']['sf-html-wrappers']['superfish_wrapmul_' . $delta] = array(
     '#type' => 'textfield',
     '#title' => t('Around the main &lt;UL&gt;'),
-    '#description' => t('Insert extra codes <strong>before</strong> and\or <strong>after</strong> the main UL. (Comma separated).') . '<br />' . t('Examples') . ': <ul><li>&lt;h3&gt;Discover the universe!&lt;/h3&gt;,</li><li>&lt;h3&gt;Hello there!&lt;/h3&gt;,&lt;div style="clear:both"&gt;&lt;/div&gt;</li><li>,&lt;div style="clear:both"&gt;&lt;/div&gt;</li></ul>',
+    '#description' => t('Insert extra codes <strong>before</strong> and\or <strong>after</strong> the main UL. (Comma separated).') . ' <em>(' . t('Default') . ': ' . t('empty') . ')</em><br />' . t('Examples') . ': <ul><li>&lt;h3&gt;Discover the universe!&lt;/h3&gt;,</li><li>&lt;h3&gt;Hello there!&lt;/h3&gt;,&lt;div style="clear:both"&gt;&lt;/div&gt;</li><li>,&lt;div style="clear:both"&gt;&lt;/div&gt;</li></ul>',
     '#default_value' => variable_get('superfish_wrapmul_' . $delta, ''),
     '#size' => 100,
     '#maxlength' => 1000,
@@ -305,7 +312,7 @@ function superfish_block_configure($delta = 0) {
   $form['sf-advanced-html']['sf-html-wrappers']['superfish_wrapul_' . $delta] = array(
     '#type' => 'textfield',
     '#title' => t('Around the &lt;UL&gt; contents'),
-    '#description' => t('Insert extra codes <strong>before</strong> and\or <strong>after</strong> the ULs. (Comma separated).') . '<br />' . t('Examples') . ': <ul><li>&lt;h3&gt;Discover the universe!&lt;/h3&gt;,</li><li>&lt;h3&gt;Hello there!&lt;/h3&gt;,&lt;div style="clear:both"&gt;&lt;/div&gt;</li><li>,&lt;div style="clear:both"&gt;&lt;/div&gt;</li></ul>',
+    '#description' => t('Insert extra codes <strong>before</strong> and\or <strong>after</strong> the ULs. (Comma separated).') . ' <em>(' . t('Default') . ': ' . t('empty') . ')</em><br />' . t('Examples') . ': <ul><li>&lt;h3&gt;Discover the universe!&lt;/h3&gt;,</li><li>&lt;h3&gt;Hello there!&lt;/h3&gt;,&lt;div style="clear:both"&gt;&lt;/div&gt;</li><li>,&lt;div style="clear:both"&gt;&lt;/div&gt;</li></ul>',
     '#default_value' => variable_get('superfish_wrapul_' . $delta, ''),
     '#size' => 100,
     '#maxlength' => 1000,
@@ -313,7 +320,7 @@ function superfish_block_configure($delta = 0) {
   $form['sf-advanced-html']['sf-html-wrappers']['superfish_wraphl_' . $delta] = array(
     '#type' => 'textfield',
     '#title' => t('Around the hyperlinks'),
-    '#description' => t('Insert HTML objects <strong>before</strong> and\or <strong>after</strong> hyperlinks. (Comma separated)') . '<br />' . t('Examples') . ': <ul><li>&lt;span class="background-left"&gt;&lt;span class="background-right"&gt;,&lt;/span&gt;&lt;/span&gt;</li><li>&lt;img src="example.jpg" width="24" height="24" alt="example" title="example" /&gt;,</li><li>,&lt;span class="custom-arrow"&gt;>&lt;/span&gt;</li></ul>',
+    '#description' => t('Insert HTML objects <strong>before</strong> and\or <strong>after</strong> hyperlinks. (Comma separated)') . ' <em>(' . t('Default') . ': ' . t('empty') . ')</em><br />' . t('Examples') . ': <ul><li>&lt;span class="background-left"&gt;&lt;span class="background-right"&gt;,&lt;/span&gt;&lt;/span&gt;</li><li>&lt;img src="example.jpg" width="24" height="24" alt="example" title="example" /&gt;,</li><li>,&lt;span class="custom-arrow"&gt;>&lt;/span&gt;</li></ul>',
     '#default_value' => variable_get('superfish_wraphl_' . $delta, ''),
     '#size' => 100,
     '#maxlength' => 1000,
@@ -321,7 +328,7 @@ function superfish_block_configure($delta = 0) {
   $form['sf-advanced-html']['sf-html-wrappers']['superfish_wraphlt_' . $delta] = array(
     '#type' => 'textfield',
     '#title' => t('Around the hyperlinks contents'),
-    '#description' => t('Insert extra codes <strong>before</strong> and\or <strong>after</strong> the text in hyperlinks. (Comma separated)') . '<br />' . t('Examples') . ': <ul><li>&lt;span class="background-left"&gt;&lt;span class="background-right"&gt;,&lt;/span&gt;&lt;/span&gt;</li><li>&lt;img src="example.jpg" width="24" height="24" alt="example" title="example" /&gt;,</li><li>,&lt;span class="custom-arrow"&gt;>&lt;/span&gt;</li></ul>',
+    '#description' => t('Insert extra codes <strong>before</strong> and\or <strong>after</strong> the text in hyperlinks. (Comma separated)') . ' <em>(' . t('Default') . ': ' . t('empty') . ')</em><br />' . t('Examples') . ': <ul><li>&lt;span class="background-left"&gt;&lt;span class="background-right"&gt;,&lt;/span&gt;&lt;/span&gt;</li><li>&lt;img src="example.jpg" width="24" height="24" alt="example" title="example" /&gt;,</li><li>,&lt;span class="custom-arrow"&gt;>&lt;/span&gt;</li></ul>',
     '#default_value' => variable_get('superfish_wraphlt_' . $delta, ''),
     '#size' => 100,
     '#maxlength' => 1000,
@@ -382,7 +389,7 @@ function superfish_block_configure($delta = 0) {
   $form['sf-advanced-css']['sf-custom-classes']['superfish_ulclass_' . $delta] = array(
     '#type' => 'textfield',
     '#title' => t('For the main UL'),
-    '#description' => t('(Space separated, without dots)<br />Example: top-menu category-science'),
+    '#description' => t('(Space separated, without dots)') . ' <em>(' . t('Default') . ': ' . t('empty') . ')</em><br />' . t('Example') . ': top-menu category-science',
     '#default_value' => variable_get('superfish_ulclass_' . $delta, ''),
     '#size' => 50,
     '#maxlength' => 1000,
@@ -390,7 +397,7 @@ function superfish_block_configure($delta = 0) {
   $form['sf-advanced-css']['sf-custom-classes']['superfish_liclass_' . $delta] = array(
     '#type' => 'textfield',
     '#title' => t('For the list items'),
-    '#description' => t('(Space separated, without dots)<br />Example: science-sub'),
+    '#description' => t('(Space separated, without dots)') . ' <em>(' . t('Default') . ': ' . t('empty') . ')</em><br />' . t('Example') . ': science-sub',
     '#default_value' => variable_get('superfish_liclass_' . $delta, ''),
     '#size' => 50,
     '#maxlength' => 1000,
@@ -398,7 +405,7 @@ function superfish_block_configure($delta = 0) {
   $form['sf-advanced-css']['sf-custom-classes']['superfish_hlclass_' . $delta] = array(
     '#type' => 'textfield',
     '#title' => t('For the hyperlinks'),
-    '#description' => t('(Space separated, without dots)<br />Example: science-link'),
+    '#description' => t('(Space separated, without dots)') . ' <em>(' . t('Default') . ': ' . t('empty') . ')</em><br />' . t('Example') . ': science-link',
     '#default_value' => variable_get('superfish_hlclass_' . $delta, ''),
     '#size' => 50,
     '#maxlength' => 1000,
@@ -412,7 +419,7 @@ function superfish_block_configure($delta = 0) {
   $form['sf-advanced-css']['sf-extra-css']['superfish_pathcss_' . $delta] = array(
     '#type' => 'textfield',
     '#title' => t('Path to CSS file(s)'),
-    '#description' => t('Include extra CSS file(s). (Comma separated)') . '<br />' . t('Examples') . ': <ul><li>sites/all/files/example.css</li><li>sites/all/files/example.css,sites/all/files/example2.css</li></ul>',
+    '#description' => t('Include extra CSS file(s). (Comma separated)') . ' <em>(' . t('Default') . ': ' . t('empty') . ')</em><br />' . t('Examples') . ': <ul><li>sites/all/files/example.css</li><li>sites/all/files/example.css,sites/all/files/example2.css</li></ul>',
     '#default_value' => variable_get('superfish_pathcss_' . $delta, ''),
     '#size' => 100,
     '#maxlength' => 1000,
@@ -434,8 +441,8 @@ function superfish_block_save($delta = 0, $edit = array()) {
   variable_set('superfish_pathclass_' . $delta, $edit['superfish_pathclass_' . $delta]);
   variable_set('superfish_pathlevels_' . $delta, $edit['superfish_pathlevels_' . $delta]);
   variable_set('superfish_slide_' . $delta, $edit['superfish_slide_' . $delta]);
-  variable_set('superfish_arrow_' . $delta, $edit['superfish_arrow_' . $delta]);
   variable_set('superfish_shadow_' . $delta, $edit['superfish_shadow_' . $delta]);
+  variable_set('superfish_arrow_' . $delta, $edit['superfish_arrow_' . $delta]);
   variable_set('superfish_expanded_' . $delta, $edit['superfish_expanded_' . $delta]);
   variable_set('superfish_bgf_' . $delta, $edit['superfish_bgf_' . $delta]);
   variable_set('superfish_spp_' . $delta, $edit['superfish_spp_' . $delta]);
@@ -476,8 +483,8 @@ function superfish_block_save($delta = 0, $edit = array()) {
  */
 function superfish_contents($delta = 0) {
   global $language;
-  list($menu_name, $mlid) = explode(':', variable_get('superfish_menu_' . $delta, 'main-menu:0'));
-  
+  list($menu_name, $mlid) = explode(':', variable_get('superfish_menu_' . $delta, 'management:1'));
+
   $sfsettings = $sfoptions = $sfplugins = array();
   $sfsettings['depth'] = variable_get('superfish_depth_' . $delta, '-1');
   $sfsettings['type'] = variable_get('superfish_type_' . $delta, 'horizontal');
@@ -572,6 +579,7 @@ function superfish_contents($delta = 0) {
   if ($output = theme('superfish', $vars)) {
     
     if (!empty($output['content'])) {
+      $output['subject'] = $output['subject'];
       $output['content'] = array(
         '#type' => 'markup',
         '#markup' => filter_xss($output['content']),
@@ -756,7 +764,7 @@ function superfish_init() {
     foreach ($sf_library as $s) {
       drupal_add_js($s, 'file');
     }
-
+    
     drupal_add_js(drupal_get_path('module', 'superfish') . '/superfish.js', 'file');
 
     drupal_add_css(libraries_get_path('superfish') . '/css/superfish.css', 'file');
@@ -835,7 +843,7 @@ function theme_superfish($variables) {
     else {
       $cache['menu'] = $menu;
     }
-
+    
     // For custom $menus and menus built all the way from the top-level we
     // don't need to "create" the specific sub-menu and we need to get the title
     // from the $menu_name since there is no "parent item" array.
@@ -968,7 +976,7 @@ function theme_superfish_build($variables) {
           $show_linkdescription = (is_array($settings['hldexclude'])) ? ((in_array($mlid, $settings['hldexclude'])) ? FALSE : $show_linkdescription) : (($settings['hldexclude'] == $mlid) ? FALSE : $show_linkdescription);
         }
         if ($show_linkdescription) {
-          $menu_item['link']['title'] .= '<span class="sf-description">';
+          $menu_item['link']['title'] .= ' <span class="sf-description">';
           $menu_item['link']['title'] .= (!empty($menu_item['link']['localized_options']['attributes']['title'])) ? $menu_item['link']['localized_options']['attributes']['title'] : array();
           $menu_item['link']['title'] .= '</span>';
           $link_options['html'] = TRUE;
@@ -1034,7 +1042,8 @@ function theme_superfish_build($variables) {
         $var = array(
           'id' => $id,
           'menu' => $menu_item['below'],
-          'depth' => $depth, 'trail' => $trail,
+          'depth' => $depth,
+          'trail' => $trail,
           'sfsettings' => $sfsettings
         );
         $children = theme('superfish_build', $var);
