@@ -1015,7 +1015,7 @@ function theme_superfish_build($variables) {
       $output['content'] .= ($item_class) ? ' class="' . trim($item_class) . '">' : '>';
       $output['content'] .= ($megamenu_column) ? '<div class="sf-megamenu-column">' : '';
       $output['content'] .= isset($whl[0]) ? $whl[0] : '';
-      $output['content'] .= l($menu_item['link']['title'], $menu_item['link']['link_path'], $link_options);
+      $output['content'] .= l($menu_item['link']['title'], $menu_item['link']['href'], $link_options);
       $output['content'] .= isset($whl[1]) ? $whl[1] : '';
       $output['content'] .= ($megamenu_wrapper) ? '<ul class="sf-megamenu"><li class="sf-megamenu-wrapper ' . $item_class . '">' : '';
       $output['content'] .= ($show_children) ? (isset($wul[0]) ? $wul[0] : '') : '';
