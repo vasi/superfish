@@ -1008,7 +1008,7 @@ function theme_superfish_build($variables) {
       }
       $menu_item['link']['localized_options']['attributes']['class'] = $link_class;
 
-      $link_options['attributes'] = $menu_item['link']['localized_options']['attributes'];
+      $link_options += $menu_item['link']['localized_options'];
 
       // Render the menu item.
       $output['content'] .= '<li id="menu-' . $mlid . '-' . $id . '"';
