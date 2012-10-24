@@ -595,7 +595,6 @@ function superfish_contents($delta = 0) {
       }
     }
   }
-  
   return $output;
 }
 
@@ -765,7 +764,7 @@ function theme_superfish($variables) {
   $menu_name = $variables['menu_name'];
   $mlid = $variables['mlid'];
   $sfsettings = $variables['sfsettings'];
-  
+
   $cache_key = 'links:' . $menu_name . ':all-cid:' . $variables['mlid'] . ':' . $user->uid . ':' . $language->language;
   $cache = cache_get($cache_key, 'cache_menu');
   if ($cache && isset($cache->data)) {
@@ -801,14 +800,14 @@ function theme_superfish($variables) {
     cache_set($cache_key, $cache, 'cache_menu');
     $cache = cache_get($cache_key, 'cache_menu')->data;
   }
-  
+
   $output['content'] = '';
   $output['subject'] = $cache['title'];
   if ($cache['menu']) {
     // Set the total menu depth counting from this parent if we need it.
     $depth = $sfsettings['depth'];
     $depth = ($sfsettings['depth'] > 0 && isset($cache['parent_depth'])) ? $cache['parent_depth'] + $depth : $depth;
-    
+
     $var = array(
       'id' => $id,
       'menu' => $cache['menu'],
@@ -872,7 +871,7 @@ function theme_superfish_build($variables) {
     $show_children = $megamenu_wrapper = $megamenu_column = $megamenu_content = FALSE;
     $item_class = $link_options = $link_class = array();
     $mlid = $menu_item['link']['mlid'];
-  
+
     if (!isset($menu_item['link']['hidden']) || $menu_item['link']['hidden'] == 0) {
       $item_class[] = ($trail && in_array($mlid, $trail)) ? 'active-trail' : '';
 
@@ -1001,9 +1000,9 @@ function theme_superfish_build($variables) {
         $link_class = array_merge($link_class_current, array_filter($link_class));
       }
       $menu_item['link']['localized_options']['attributes']['class'] = $link_class;
- 
+
       $link_options['attributes'] = $menu_item['link']['localized_options']['attributes'];
-      
+
       // Render the menu item.
       $output['content'] .= '<li id="menu-' . $mlid . '-' . $id . '"';
       $output['content'] .= ($item_class) ? ' class="' . trim($item_class) . '">' : '>';
