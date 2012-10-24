@@ -562,6 +562,16 @@ function superfish_contents($delta = 0) {
     'sfsettings' => $sfsettings
   );
   if ($output = theme('superfish', $vars)) {
+    
+    if (!empty($output['content'])) {
+      $output['content'] = array(
+        '#type' => 'markup',
+        '#markup' => filter_xss($output['content']),
+        '#contextual_links' => array(
+          'superfish' => array('admin/structure/menu/manage', array($menu_name)),
+        )
+      );
+    }
     // Adding required Javascript
     drupal_add_js($javascript, array('type' => 'inline', 'weight' => 100));
 
@@ -1010,7 +1020,7 @@ function theme_superfish_build($variables) {
       }
 
       $item_class = implode(' ', array_filter($item_class));
-      
+
       if (isset($menu_item['link']['localized_options']['attributes']['class'])) {
         $link_class_current = $menu_item['link']['localized_options']['attributes']['class'];
         $link_class = array_merge($link_class_current, array_filter($link_class));
