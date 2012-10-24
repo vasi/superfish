@@ -773,7 +773,14 @@ function theme_superfish($variables) {
   else {
     // Start caching the menu.
     $cache = array();
-    $cache['menu'] = menu_tree_all_data($menu_name);
+    $menu = menu_tree_all_data($menu_name);
+
+    if (function_exists('i18n_menu_localize_tree')) {
+      $cache['menu'] = i18n_menu_localize_tree($menu);
+    }
+    else {
+      $cache['menu'] = $menu;
+    }
 
     // For custom $menus and menus built all the way from the top-level we
     // don't need to "create" the specific sub-menu and we need to get the title
