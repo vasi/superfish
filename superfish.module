@@ -40,6 +40,7 @@ function superfish_help($path, $arg) {
  * Implements hook_block_info().
  */
 function superfish_block_info() {
+  $blocks = array();
   $number = variable_get('superfish_number', 4);
   for ($i = 1; $i <= $number; $i++) {
     $blocks[$i] = array(
