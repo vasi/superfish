@@ -59,7 +59,7 @@ function superfish_block_configure($delta = 0) {
   $form['superfish_name_' . $delta] = array(
     '#type' => 'textfield',
     '#title' => t('Block description'),
-    '#description' => t('A brief description of your block. Used on the <a href="@overview">Blocks administration page</a>.', array('@overview' => url('admin/structure/block'))),
+    '#description' => t('A brief description of your block. Used on the !link', array('!link' => l(t('Blocks administration page'), 'admin/structure/block'))),
     '#default_value' => variable_get('superfish_name_' . $delta, 'Superfish ' . $delta),
   );
   $form['sf-menu'] = array(
@@ -718,22 +718,30 @@ function superfish_block_validate($form, &$form_state) {
  */
 function superfish_styles($display = 'list', $style = NULL) {
   $output = '';
-  if (module_exists('libraries')) {
+  // Ensure the Libraries API module is installed and working.
+  if (module_exists('libraries') && function_exists('libraries_get_path')) {
     $directory = libraries_get_path('superfish') . '/style';
-    $files = file_scan_directory($directory, '/.*\.css$/', array('key' => 'name'));
-    if ($display == 'list') {
-      $output = array('none' => t('None'));
+  }
+  // Otherwise use the default directory.
+  else {
+    $directory = 'sites/all/libraries/superfish/style';
+  }
+  $files = (file_exists($directory)) ? file_scan_directory($directory, '/.*\.css$/', array('key' => 'name')) : '';
+  if ($display == 'list') {
+    $output = array('none' => t('None'));
+    if (is_array($files)) {
       foreach ($files as $file) {
         $output[$file->name] = drupal_ucfirst($file->name);
       }
-      natcasesort($output);
     }
-    if ($display == 'path' && $style) {
-      if (isset($files[$style])) {
-        $output = $files[$style]->uri;
-      } else {
-        $output = '';
-      }
+    natcasesort($output);
+  }
+  if ($display == 'path' && $style) {
+    if (isset($files[$style])) {
+      $output = $files[$style]->uri;
+    }
+    else {
+      $output = '';
     }
   }
   return $output;
@@ -760,26 +768,37 @@ function array_remove_empty($haystack) {
  * Implements hook_init().
  */
 function superfish_init() {
-  if (module_exists('libraries')) {
-    $sf_library = variable_get('superfish_slp',
-      libraries_get_path('superfish') . "/jquery.hoverIntent.minified.js\n" .
-      libraries_get_path('superfish') . "/jquery.bgiframe.min.js\n" .
-      libraries_get_path('superfish') . "/superfish.js\n" .
-      libraries_get_path('superfish') . "/supersubs.js\n" .
-      libraries_get_path('superfish') . "/supposition.js\n" .
-      libraries_get_path('superfish') . "/sftouchscreen.js");
-    $sf_library = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", trim($sf_library));
-    $sf_library = explode("\n", $sf_library);
-    foreach ($sf_library as $s) {
+  // Ensure the Libraries API module is installed and working.
+  if (module_exists('libraries') && function_exists('libraries_get_path')) {
+    $directory = libraries_get_path('superfish');
+  }
+  // Otherwise use the default directory.
+  else {
+    $directory = 'sites/all/libraries/superfish';
+  }
+  $slp_default = $directory . "/jquery.hoverIntent.minified.js\n" .
+    $directory . "/jquery.bgiframe.min.js\n" .
+    $directory . "/superfish.js\n" .
+    $directory . "/supersubs.js\n" .
+    $directory . "/supposition.js\n" .
+    $directory . "/sftouchscreen.js";
+
+  $sf_library = variable_get('superfish_slp', $slp_default);
+  $sf_library = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", trim($sf_library));
+  $sf_library = explode("\n", $sf_library);
+  foreach ($sf_library as $s) {
+    if (file_exists($s)) {
       drupal_add_js($s, 'file');
     }
-    
-    drupal_add_js(drupal_get_path('module', 'superfish') . '/superfish.js', 'file');
-
-    drupal_add_css(libraries_get_path('superfish') . '/css/superfish.css', 'file');
-    drupal_add_css(libraries_get_path('superfish') . '/css/superfish-vertical.css', 'file');
-    drupal_add_css(libraries_get_path('superfish') . '/css/superfish-navbar.css', 'file');
   }
+
+  if (file_exists($directory . '/superfish.js')) {
+    drupal_add_js(drupal_get_path('module', 'superfish') . '/superfish.js', 'file');
+  }
+
+  drupal_add_css($directory . '/css/superfish.css', 'file');
+  drupal_add_css($directory . '/css/superfish-vertical.css', 'file');
+  drupal_add_css($directory . '/css/superfish-navbar.css', 'file');
 }
 
 /**

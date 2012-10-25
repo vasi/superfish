@@ -2,6 +2,5 @@ name = "Superfish"
 description = "jQuery Superfish plugin for your Drupal menus."
 package = User interface
 dependencies[] = menu
-dependencies[] = libraries
 configure = admin/config/user-interface/superfish
 core = 7.x
