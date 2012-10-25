@@ -828,61 +828,45 @@ function theme_superfish($variables) {
   $mlid = $variables['mlid'];
   $sfsettings = $variables['sfsettings'];
 
-  $cache_key = 'links:' . $menu_name . ':all-cid:' . $variables['mlid'] . ':' . $user->uid . ':' . $language->language;
-  $cache = cache_get($cache_key, 'cache_menu');
-  if ($cache && isset($cache->data)) {
-    $cache = $cache->data;
-  }
-  else {
-    // Start caching the menu.
-    $cache = array();
-    $menu = menu_tree_all_data($menu_name);
+  $menu = menu_tree_all_data($menu_name);
 
-    if (function_exists('i18n_menu_localize_tree')) {
-      $cache['menu'] = i18n_menu_localize_tree($menu);
-    }
-    else {
-      $cache['menu'] = $menu;
-    }
-    
-    // For custom $menus and menus built all the way from the top-level we
-    // don't need to "create" the specific sub-menu and we need to get the title
-    // from the $menu_name since there is no "parent item" array.
-    // Create the specific menu if we have a mlid.
-    if (!empty($mlid)) {
-      // Load the parent menu item.
-      $item = menu_link_load($mlid);
-      $cache['title'] = check_plain($item['title']);
-      $cache['parent_depth'] = $item['depth'];
-      // Narrow down the full menu to the specific sub-tree we need.
-      for ($p = 1; $p < 10; $p++) {
-        if ($sub_mlid = $item["p$p"]) {
-          $subitem = menu_link_load($sub_mlid);
-          $key = (50000 + $subitem['weight']) . ' ' . $subitem['title'] . ' ' . $subitem['mlid'];
-          $cache['menu'] = (isset($cache['menu'][$key]['below'])) ? $cache['menu'][$key]['below'] : $cache['menu'];
-        }
+  if (function_exists('i18n_menu_localize_tree')) {
+    $menu = i18n_menu_localize_tree($menu);
+  }
+
+  // For custom $menus and menus built all the way from the top-level we
+  // don't need to "create" the specific sub-menu and we need to get the title
+  // from the $menu_name since there is no "parent item" array.
+  // Create the specific menu if we have a mlid.
+  if (!empty($mlid)) {
+    // Load the parent menu item.
+    $item = menu_link_load($mlid);
+    $title = check_plain($item['title']);
+    $parent_depth = $item['depth'];
+    // Narrow down the full menu to the specific sub-tree we need.
+    for ($p = 1; $p < 10; $p++) {
+      if ($sub_mlid = $item["p$p"]) {
+        $subitem = menu_link_load($sub_mlid);
+        $key = (50000 + $subitem['weight']) . ' ' . $subitem['title'] . ' ' . $subitem['mlid'];
+        $menu = (isset($menu[$key]['below'])) ? $menu[$key]['below'] : $menu;
       }
     }
-    else {
-      $result = db_query("SELECT title FROM {menu_custom} WHERE menu_name = :a", array(':a' => $menu_name))->fetchField();
-      $cache['title'] = check_plain($result);
-    }
-    cache_set($cache_key, $cache, 'cache_menu');
-    if (cache_get($cache_key, 'cache_menu')->data != $cache) {
-      watchdog('superfish', 'Cache subsystem is broken; could not retrieve data from cache_get() immediately after cache_set().', array(), WATCHDOG_ERROR);
-    }
+  }
+  else {
+    $result = db_query("SELECT title FROM {menu_custom} WHERE menu_name = :a", array(':a' => $menu_name))->fetchField();
+    $title = check_plain($result);
   }
 
   $output['content'] = '';
-  $output['subject'] = $cache['title'];
-  if ($cache['menu']) {
+  $output['subject'] = $title;
+  if ($menu) {
     // Set the total menu depth counting from this parent if we need it.
     $depth = $sfsettings['depth'];
-    $depth = ($sfsettings['depth'] > 0 && isset($cache['parent_depth'])) ? $cache['parent_depth'] + $depth : $depth;
+    $depth = ($sfsettings['depth'] > 0 && isset($parent_depth)) ? $parent_depth + $depth : $depth;
 
     $var = array(
       'id' => $id,
-      'menu' => $cache['menu'],
+      'menu' => $menu,
       'depth' => $depth,
       'trail' => superfish_build_page_trail(menu_tree_page_data($menu_name)),
       'sfsettings' => $sfsettings
