@@ -740,7 +740,9 @@ function array_remove_empty($haystack) {
       $haystack[$key] = array_remove_empty($haystack[$key]);
     }
     elseif (empty($value) && is_bool($value) !== TRUE) {
-      unset($haystack[$key]);
+      if ($haystack[$key] != '0') {
+        unset($haystack[$key]);
+      }
     }
   }
   return $haystack;
