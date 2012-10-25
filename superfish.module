@@ -276,6 +276,11 @@ function superfish_block_configure($delta = 0) {
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
   );
+  $form['sf-advanced-html']['sf-hyperlinks']['superfish_use_link_theme_' . $delta] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Use a theme function for hyperlinks') . '<br /><small>' . t('(Disabling this feature can result in performance improvements, depending on the number of hyperlinks in the menu.)') . '</small>',
+    '#default_value' => variable_get('superfish_use_link_theme_' . $delta, 1),
+  );
   $form['sf-advanced-html']['sf-hyperlinks']['superfish_hldescription_' . $delta] = array(
     '#type' => 'checkbox',
     '#title' => t('Include hyperlinks description (title) in hyperlinks text.'),
@@ -464,6 +469,7 @@ function superfish_block_save($delta = 0, $edit = array()) {
   variable_set('superfish_itemcount_' . $delta, $edit['superfish_itemcount_' . $delta]);
   variable_set('superfish_itemcounter_' . $delta, $edit['superfish_itemcounter_' . $delta]);
   variable_set('superfish_itemdepth_' . $delta, $edit['superfish_itemdepth_' . $delta]);
+  variable_set('superfish_use_link_theme_' . $delta, $edit['superfish_use_link_theme_' . $delta]);
   variable_set('superfish_hldescription_' . $delta, $edit['superfish_hldescription_' . $delta]);
   variable_set('superfish_hldmenus_' . $delta, $edit['superfish_hldmenus_' . $delta]);
   variable_set('superfish_hldexclude_' . $delta, $edit['superfish_hldexclude_' . $delta]);
@@ -504,6 +510,7 @@ function superfish_contents($delta = 0) {
   $sfsettings['wrapul'] = variable_get('superfish_wrapul_' . $delta, '');
   $sfsettings['wraphl'] = variable_get('superfish_wraphl_' . $delta, '');
   $sfsettings['wraphlt'] = variable_get('superfish_wraphlt_' . $delta, '');
+  $sfsettings['use_link_theme'] = variable_get('superfish_use_link_theme_' . $delta, 1);
   $sfsettings['linkdescription'] = variable_get('superfish_hldescription_' . $delta, 0);
   $sfsettings['hldmenus'] = variable_get('superfish_hldmenus_' . $delta, '');
   $sfsettings['hldmenus'] = (strpos($sfsettings['hldmenus'], ',')) ? array_remove_empty(explode(',', $sfsettings['hldmenus'])) : $sfsettings['hldmenus'];
@@ -822,6 +829,12 @@ function superfish_theme() {
         'trail' => NULL,
         'sfsettings' => NULL
       ),
+    ),
+    'superfish_menu_item_link' => array(
+      'variables' => array(
+        'menu_item' => NULL,
+        'link_options' => NULL,
+      ),
     )
   );
 }
@@ -1094,7 +1107,12 @@ function theme_superfish_build($variables) {
       $output['content'] .= ($item_class) ? ' class="' . trim($item_class) . '">' : '>';
       $output['content'] .= ($megamenu_column) ? '<div class="sf-megamenu-column">' : '';
       $output['content'] .= isset($whl[0]) ? $whl[0] : '';
-      $output['content'] .= l($menu_item['link']['title'], $menu_item['link']['href'], $link_options);
+      if ($settings['use_link_theme']) {
+        $output['content'] .= theme('superfish_menu_item_link', array('menu_item' => $menu_item, 'link_options' => $link_options));
+      }
+      else {
+        $output['content'] .= l($menu_item['link']['title'], $menu_item['link']['href'], $link_options);
+      }
       $output['content'] .= isset($whl[1]) ? $whl[1] : '';
       $output['content'] .= ($megamenu_wrapper) ? '<ul class="sf-megamenu"><li class="sf-megamenu-wrapper ' . $item_class . '">' : '';
       $output['content'] .= ($show_children) ? (isset($wul[0]) ? $wul[0] : '') : '';
@@ -1111,4 +1129,19 @@ function theme_superfish_build($variables) {
   $output['parent_children'] = $parent_children;
   $output['single_children'] = $single_children;
   return $output;
+}
+/**
+ * Theme a menu item link.
+ *
+ * @param $variables
+ *   An array of variables containing:
+ *    - menu_item: The menu item array.
+ *    - link_options: An array of link options.
+ *
+ * @ingroup themeable
+ */
+function theme_superfish_menu_item_link($variables) {
+  $menu_item = $variables['menu_item'];
+  $link_options = $variables['link_options'];
+  return l($menu_item['link']['title'], $menu_item['link']['href'], $link_options);
 }
