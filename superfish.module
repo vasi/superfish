@@ -71,8 +71,8 @@ function superfish_block_configure($delta = 0) {
   $form['sf-menu']['superfish_menu_' . $delta] = array(
     '#type' => 'select',
     '#title' => t('Menu parent'),
-    '#description' => t('The menu you want to be displayed using Superfish.') . ' <em>(' . t('Default') . ': -- Administration)</em>',
-    '#default_value' => variable_get('superfish_menu_' . $delta, 'management:1'),
+    '#description' => t('The menu you want to be displayed using Superfish.') . ' <em>(' . t('Default') . ': &lt;Main menu&gt;)</em>',
+    '#default_value' => variable_get('superfish_menu_' . $delta, 'main-menu:0'),
     '#options' => menu_parent_options(menu_get_menus(), array('mlid' => 0)),
   );
   $form['sf-menu']['superfish_depth_' . $delta] = array(
@@ -701,7 +701,7 @@ function superfish_block_save($delta = 0, $edit = array()) {
  */
 function superfish_contents($delta = 0) {
   global $language;
-  list($menu_name, $mlid) = explode(':', variable_get('superfish_menu_' . $delta, 'management:1'));
+  list($menu_name, $mlid) = explode(':', variable_get('superfish_menu_' . $delta, 'main-menu:0'));
 
   $sfsettings = $sfoptions = $sfplugins = array();
   $sfsettings['depth'] = variable_get('superfish_depth_' . $delta, '-1');
