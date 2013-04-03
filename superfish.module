@@ -729,6 +729,8 @@ function superfish_block_save($delta = 0, $edit = array()) {
  */
 function superfish_contents($delta = 0) {
   global $language;
+  $block_css = $block_js = array();
+
   list($menu_name, $mlid) = explode(':', variable_get('superfish_menu_' . $delta, 'main-menu:0'));
 
   $sfsettings = $sfoptions = $sfplugins = array();
