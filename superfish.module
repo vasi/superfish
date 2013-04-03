@@ -785,148 +785,159 @@ function superfish_contents($delta = 0) {
   $sfoptions['speed'] = ((is_numeric($speed)) ? (int)$speed : (($speed == ('slow' || 'normal' || 'fast')) ? '\'' . $speed . '\'': ''));
   $sfoptions['autoArrows'] = (variable_get('superfish_arrow_' . $delta, 1) == 1) ? TRUE : FALSE;
   $sfoptions['dropShadows'] = (variable_get('superfish_shadow_' . $delta, 1) == 1) ? TRUE : FALSE;
-  $sfoptions['disableHI'] = (variable_get('superfish_hid_' . $delta, 1) == 0) ? TRUE : FALSE;
+  if (variable_get('superfish_hid_' . $delta, 1) == 1 && superfish_library('javascript', 'jquery.hoverIntent.minified.js', 'check')) {
+    $sfoptions['disableHI'] = FALSE;
+    $block_js = array_merge($block_js, superfish_library('javascript', 'hoverIntent', 'add'));
+  }
+  else {
+    $sfoptions['disableHI'] = FALSE;
+  }
   $sfoptions = array_remove_empty($sfoptions);
 
   $touchscreen = variable_get('superfish_touch_' . $delta, 0);
-  switch ($touchscreen) {
-    case 1 :
-      $sfplugins['touchscreen']['mode'] = 'always_active';
-    break;
-    case 2 :
-      $sfplugins['touchscreen']['mode'] = 'window_width';
-      $tsbp = variable_get('superfish_touchbp_' . $delta, 768);
-      $sfplugins['touchscreen']['breakpoint'] = ($tsbp != 768) ? (int)$tsbp : '';
-    break;
-    case 3 :
-      // Which method to use for UA detection.
-      $tsuam = variable_get('superfish_touchuam_' . $delta, 0);
-      switch ($tsuam) {
-        // Client-side.
-        case 0 :
-          $tsua = variable_get('superfish_touchua_' . $delta, 0);
-          switch ($tsua) {
-            case 0 :
-              $sfplugins['touchscreen']['mode'] = 'useragent_predefined';
-            break;
-            case 1 :
-              $sfplugins['touchscreen']['mode'] = 'useragent_custom';
-              $tsual = drupal_strtolower(variable_get('superfish_touchual_' . $delta, ''));
-              if (strpos($tsual, '*')) {
-                $tsual = str_replace('*', '|', $tsual);
-              }
-              $tsual = '/(' . $tsual . ')/i';
-              $sfplugins['touchscreen']['useragent'] = $tsual;
-            break;
-          }
-
-        break;
-        // Server-side.
-        case 1 :
-          if (isset($_SERVER['HTTP_USER_AGENT'])) {
-            $hua = drupal_strtolower($_SERVER['HTTP_USER_AGENT']);
+  if ($touchscreen > 0  && superfish_library('javascript', 'sftouchscreen.js', 'check')) {
+    $block_js = array_merge($block_js, superfish_library('javascript', 'sftouchscreen', 'add'));
+    switch ($touchscreen) {
+      case 1 :
+        $sfplugins['touchscreen']['mode'] = 'always_active';
+      break;
+      case 2 :
+        $sfplugins['touchscreen']['mode'] = 'window_width';
+        $tsbp = variable_get('superfish_touchbp_' . $delta, 768);
+        $sfplugins['touchscreen']['breakpoint'] = ($tsbp != 768) ? (int)$tsbp : '';
+      break;
+      case 3 :
+        // Which method to use for UA detection.
+        $tsuam = variable_get('superfish_touchuam_' . $delta, 0);
+        switch ($tsuam) {
+          // Client-side.
+          case 0 :
             $tsua = variable_get('superfish_touchua_' . $delta, 0);
             switch ($tsua) {
-              // Use the pre-defined list of mobile UA strings.
               case 0 :
-                if (preg_match('/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i', $hua)) {
-                  $sfplugins['touchscreen']['mode'] = 'always_active';
-                }
+                $sfplugins['touchscreen']['mode'] = 'useragent_predefined';
               break;
-              // Use the custom list of UA strings.
               case 1 :
-                $tsual = variable_get('superfish_touchual_' . $delta, '');
-                $tsual = drupal_strtolower($tsual);
-                $tsuac = array();
+                $sfplugins['touchscreen']['mode'] = 'useragent_custom';
+                $tsual = drupal_strtolower(variable_get('superfish_touchual_' . $delta, ''));
                 if (strpos($tsual, '*')) {
-                  $tsual = explode('*', $tsual);
-                  foreach ($tsual as $ua) {
-                    $tsuac[] = (strpos($hua, $ua)) ? 1 : 0;
-                  }
+                  $tsual = str_replace('*', '|', $tsual);
                 }
-                else {
-                  $tsuac[] = (strpos($hua, $tsual)) ? 1 : 0;
-                }
-                if (in_array(1, $tsuac)) {
-                  $sfplugins['touchscreen']['mode'] = 'active';
-                }
+                $tsual = '/(' . $tsual . ')/i';
+                $sfplugins['touchscreen']['useragent'] = $tsual;
               break;
             }
-          }
-        break;
-      }
-    break;
-  }
-  $smallscreen = variable_get('superfish_small_' . $delta, 2);
-  switch ($smallscreen) {
-    case 1 :
-      $sfplugins['smallscreen']['mode'] = 'always_active';
-    break;
-    case 2 :
-      $sfplugins['smallscreen']['mode'] = 'window_width';
-      $ssbp = variable_get('superfish_smallbp_' . $delta, 768);
-      $sfplugins['smallscreen']['breakpoint'] = ($ssbp != 768) ? (int)$ssbp : '';
-    break;
-    case 3 :
-      // Which method to use for UA detection.
-      $ssuam = variable_get('superfish_smalluam_' . $delta, 0);
-      switch ($ssuam) {
-        // Client-side.
-        case 0 :
-          $ssua = variable_get('superfish_smallua_' . $delta, 0);
-          switch ($ssua) {
-            case 0 :
-              $sfplugins['smallscreen']['mode'] = 'useragent_predefined';
-            break;
-            case 1 :
-              $sfplugins['smallscreen']['mode'] = 'useragent_custom';
-              $ssual = drupal_strtolower(variable_get('superfish_smallual_' . $delta, ''));
-              if (strpos($ssual, '*')) {
-                $ssual = str_replace('*', '|', $ssual);
-              }
-              $ssual = '/(' . $ssual . ')/i';
-              $sfplugins['smallscreen']['useragent'] = $ssual;
-            break;
-          }
 
-        break;
-        // Server-side.
-        case 1 :
-          if (isset($_SERVER['HTTP_USER_AGENT'])) {
-            $hua = drupal_strtolower($_SERVER['HTTP_USER_AGENT']);
+          break;
+          // Server-side.
+          case 1 :
+            if (isset($_SERVER['HTTP_USER_AGENT'])) {
+              $hua = drupal_strtolower($_SERVER['HTTP_USER_AGENT']);
+              $tsua = variable_get('superfish_touchua_' . $delta, 0);
+              switch ($tsua) {
+                // Use the pre-defined list of mobile UA strings.
+                case 0 :
+                  if (preg_match('/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i', $hua)) {
+                    $sfplugins['touchscreen']['mode'] = 'always_active';
+                  }
+                break;
+                // Use the custom list of UA strings.
+                case 1 :
+                  $tsual = variable_get('superfish_touchual_' . $delta, '');
+                  $tsual = drupal_strtolower($tsual);
+                  $tsuac = array();
+                  if (strpos($tsual, '*')) {
+                    $tsual = explode('*', $tsual);
+                    foreach ($tsual as $ua) {
+                      $tsuac[] = (strpos($hua, $ua)) ? 1 : 0;
+                    }
+                  }
+                  else {
+                    $tsuac[] = (strpos($hua, $tsual)) ? 1 : 0;
+                  }
+                  if (in_array(1, $tsuac)) {
+                    $sfplugins['touchscreen']['mode'] = 'active';
+                  }
+                break;
+              }
+            }
+          break;
+        }
+      break;
+    }
+  }
+
+  $smallscreen = variable_get('superfish_small_' . $delta, 2);
+  if ($smallscreen > 0 && superfish_library('javascript', 'sfsmallscreen.js', 'check') == 1) {
+    $block_js = array_merge($block_js, superfish_library('javascript', 'sfsmallscreen', 'add'));
+    switch ($smallscreen) {
+      case 1 :
+        $sfplugins['smallscreen']['mode'] = 'always_active';
+      break;
+      case 2 :
+        $sfplugins['smallscreen']['mode'] = 'window_width';
+        $ssbp = variable_get('superfish_smallbp_' . $delta, 768);
+        $sfplugins['smallscreen']['breakpoint'] = ($ssbp != 768) ? (int)$ssbp : '';
+      break;
+      case 3 :
+        // Which method to use for UA detection.
+        $ssuam = variable_get('superfish_smalluam_' . $delta, 0);
+        switch ($ssuam) {
+          // Client-side.
+          case 0 :
             $ssua = variable_get('superfish_smallua_' . $delta, 0);
             switch ($ssua) {
-              // Use the pre-defined list of mobile UA strings.
               case 0 :
-                if (preg_match('/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i', $hua)) {
-                  $sfplugins['smallscreen']['mode'] = 'active';
-                }
+                $sfplugins['smallscreen']['mode'] = 'useragent_predefined';
               break;
-              // Use the custom list of UA strings.
               case 1 :
-                $ssual = variable_get('superfish_smallual_' . $delta, '');
-                $ssual = drupal_strtolower($ssual);
-                $ssuac = array();
+                $sfplugins['smallscreen']['mode'] = 'useragent_custom';
+                $ssual = drupal_strtolower(variable_get('superfish_smallual_' . $delta, ''));
                 if (strpos($ssual, '*')) {
-                  $ssual = explode('*', $ssual);
-                  foreach ($ssual as $ua) {
-                    $ssuac[] = (strpos($hua, $ua)) ? 1 : 0;
-                  }
+                  $ssual = str_replace('*', '|', $ssual);
                 }
-                else {
-                  $ssuac[] = (strpos($hua, $ssual)) ? 1 : 0;
-                }
-                if (in_array(1, $ssuac)) {
-                  $sfplugins['smallscreen']['mode'] = 'always_active';
-                }
+                $ssual = '/(' . $ssual . ')/i';
+                $sfplugins['smallscreen']['useragent'] = $ssual;
               break;
             }
-          }
-        break;
-      }
-    break;
-  }
-  if ($smallscreen > 0) {
+
+          break;
+          // Server-side.
+          case 1 :
+            if (isset($_SERVER['HTTP_USER_AGENT'])) {
+              $hua = drupal_strtolower($_SERVER['HTTP_USER_AGENT']);
+              $ssua = variable_get('superfish_smallua_' . $delta, 0);
+              switch ($ssua) {
+                // Use the pre-defined list of mobile UA strings.
+                case 0 :
+                  if (preg_match('/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i', $hua)) {
+                    $sfplugins['smallscreen']['mode'] = 'active';
+                  }
+                break;
+                // Use the custom list of UA strings.
+                case 1 :
+                  $ssual = variable_get('superfish_smallual_' . $delta, '');
+                  $ssual = drupal_strtolower($ssual);
+                  $ssuac = array();
+                  if (strpos($ssual, '*')) {
+                    $ssual = explode('*', $ssual);
+                    foreach ($ssual as $ua) {
+                      $ssuac[] = (strpos($hua, $ua)) ? 1 : 0;
+                    }
+                  }
+                  else {
+                    $ssuac[] = (strpos($hua, $ssual)) ? 1 : 0;
+                  }
+                  if (in_array(1, $ssuac)) {
+                    $sfplugins['smallscreen']['mode'] = 'always_active';
+                  }
+                break;
+              }
+            }
+          break;
+        }
+      break;
+    }
     $addselected = variable_get('superfish_smallasa_' . $delta, 0);
     $menuclasses = variable_get('superfish_smallcmc_' . $delta, 0);
     $hyperlinkclasses = variable_get('superfish_smallchc_' . $delta, 0);
@@ -951,13 +962,27 @@ function superfish_contents($delta = 0) {
     }
   }
 
-  $sfplugins['supposition'] = (variable_get('superfish_spp_' . $delta, 1) == 1) ? TRUE : FALSE;
-  $sfplugins['bgiframe'] = (variable_get('superfish_bgf_' . $delta, 0) == 1) ? TRUE : FALSE;
+  if (variable_get('superfish_spp_' . $delta, 1) == 1 && superfish_library('javascript', 'supposition.js', 'check')) {
+    $sfplugins['supposition'] = TRUE;
+    $block_js = array_merge($block_js, superfish_library('javascript', 'supposition', 'add'));
+  }
+  else {
+    $sfplugins['supposition'] = FALSE;
+  }
 
-  if (variable_get('superfish_supersubs_' . $delta, 1) == 1) {
+  if (variable_get('superfish_bgf_' . $delta, 0) == 1 && superfish_library('javascript', 'jquery.bgiframe.min.js', 'check')) {
+    $sfplugins['bgiframe'] = TRUE;
+    $block_js = array_merge($block_js, superfish_library('javascript', 'bgiframe', 'add'));
+  }
+  else {
+    $sfplugins['bgiframe'] = FALSE;
+  }
+
+  if (variable_get('superfish_supersubs_' . $delta, 1) == 1 && superfish_library('javascript', 'supersubs.js', 'check')) {
     $sfplugins['supersubs']['minWidth'] = variable_get('superfish_minwidth_' . $delta, '12');
     $sfplugins['supersubs']['maxWidth'] = variable_get('superfish_maxwidth_' . $delta, '27');
     $sfplugins['supersubs']['extraWidth'] = 1;
+    $block_js = array_merge($block_js, superfish_library('javascript', 'supersubs', 'add'));
   }
 
   $vars = array(
@@ -978,7 +1003,7 @@ function superfish_contents($delta = 0) {
     }
 
     // Creating a title for the <select> title.
-    if ($smallscreen !== 0) {
+    if ($smallscreen > 0 && superfish_library('javascript', 'sfsmallscreen.js', 'check')) {
       $smallset = variable_get('superfish_smallset_' . $delta, '');
       if (empty($smallset)) {
         $sfplugins['smallscreen']['title'] = $output['subject'];
@@ -995,25 +1020,42 @@ function superfish_contents($delta = 0) {
     if (!empty($sfplugins)) {
       $javascript['superfish'][$delta]['plugins'] = $sfplugins;
     }
-    // Adding required Javascript
-    drupal_add_js($javascript, 'setting');
+    // Adding required Javascript.
+    if (superfish_library('javascript', 'superfish.js', 'check')) {
+      $block_js = array_merge($block_js, superfish_library('javascript', 'superfish.js', 'add'));
+      if (superfish_library('javascript', 'drupal_behavior', 'check')) {
+        $block_js = array_merge($block_js, array(array('data' => $javascript, 'type' => 'setting')));
+        $block_js = array_merge($block_js, superfish_library('javascript', 'drupal_behavior', 'add'));
+      }
+    }
 
     // Adding required CSS files
+    if (superfish_library('CSS', 'superfish', 'check')) {
+      $block_css = array_merge($block_css, superfish_library('CSS', 'superfish', 'add'));
+    }
+    if (superfish_library('CSS', $sfsettings['type'], 'check')) {
+      $block_css = array_merge($block_css, superfish_library('CSS', $sfsettings['type'], 'add'));
+    }
     if ($sfsettings['style'] != 'none' && superfish_styles('path', $sfsettings['style']) != '') {
-      drupal_add_css(superfish_styles('path', $sfsettings['style']));
+      $block_css = array_merge($block_css, array(superfish_styles('path', $sfsettings['style']) => array('type' => 'file')));
     }
     $extracss = variable_get('superfish_pathcss_' . $delta, '');
     if ($extracss) {
       if (strpos($extracss, ',')) {
         $extracss = explode(',', $extracss);
         foreach ($extracss as $c) {
-          drupal_add_css($c);
+          $block_css = array_merge($block_css, array($c => array('type' => 'file')));
         }
       }
       else {
-        drupal_add_css($extracss);
+        $block_css = array_merge($block_css, array($extracss => array('type' => 'file')));
       }
     }
+
+    $output['content']['#attached'] = array(
+      'css' => $block_css,
+      'js' => $block_js,
+    );
   }
   return $output;
 }
@@ -1165,6 +1207,135 @@ function superfish_styles($display = 'list', $style = NULL) {
 }
 
 /**
+/**
+ * Add require JavaScript and CSS files from the Superfish library.
+ */
+function superfish_library($type = NULL, $name = NULL, $action = 'add') {
+  // Ensure the Libraries API module is installed and working and is able to find the library.
+  if (module_exists('libraries') && function_exists('libraries_get_path') && libraries_get_path('superfish') != '') {
+    $directory = libraries_get_path('superfish');
+    $directory_easing = libraries_get_path('easing');
+  }
+  // Otherwise use the default directory.
+  else {
+    $directory = 'sites/all/libraries/superfish';
+    $directory_easing = 'sites/all/libraries/easing';
+  }
+  $slp_default = $directory . "/jquery.hoverIntent.minified.js\n" .
+    $directory . "/jquery.bgiframe.min.js\n" .
+    $directory . "/superfish.js\n" .
+    $directory . "/supersubs.js\n" .
+    $directory . "/supposition.js\n" .
+    $directory . "/sftouchscreen.js\n" .
+    $directory . "/sfsmallscreen.js";
+
+  $sf_library = variable_get('superfish_slp', $slp_default);
+  $sf_library = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", trim($sf_library));
+  $sf_library = explode("\n", $sf_library);
+
+  if ($action == 'check') {
+    switch ($type) {
+      case  'javascript':
+        switch ($name) {
+          case 'drupal_behavior':
+            $name = 'superfish.js';
+            $sf_library = array(drupal_get_path('module', 'superfish') . '/' . $name);
+          break;
+          case 'jquery.easing.js':
+            $name = 'jquery.easing.js';
+            $sf_library = array($directory_easing . '/' . $name);
+          break;
+        }
+        foreach ($sf_library as $s) {
+          if (strpos($s, $name) !== FALSE) {
+            if (file_exists($s)) {
+              return TRUE;
+            }
+            else {
+              watchdog('page not found', $directory . (($type == 'CSS') ? '/css' : '') . '/' . $name, NULL, WATCHDOG_ERROR);
+              return FALSE;
+            }
+          }
+        }
+      break;
+      case 'CSS':
+        $directory .= '/css';
+        switch ($name) {
+          case 'superfish':
+          case 'horizontal':
+            if (file_exists($directory . '/superfish.css')) {
+              return TRUE;
+            }
+            else {
+              watchdog('page not found', $directory . '/superfish.css', NULL, WATCHDOG_WARNING);
+              return FALSE;
+            }
+          break;
+          case 'navbar':
+          case 'vertical':
+            if (file_exists($directory . '/superfish-' . $name . '.css')) {
+              return TRUE;
+            }
+            else {
+              watchdog('page not found', $directory . '/superfish-' . $name . '.css', NULL, WATCHDOG_WARNING);
+              return FALSE;
+            }
+          break;
+        }
+      break;
+    }
+  }
+  if ($action == 'add') {
+    switch ($type) {
+      case 'javascript':
+        switch ($name) {
+          case 'easing':
+            $output = array($directory_easing . '/jquery.easing.js' => array('type' => 'file'));
+            return $output;
+          break;
+          case 'drupal_behavior':
+            $output = array(drupal_get_path('module', 'superfish') . '/superfish.js' => array('type' => 'file'));
+            return $output;
+          break;
+          default :
+            if (file_exists($directory . '/superfish.js')) {
+              foreach ($sf_library as $s) {
+                if (strpos($s, $name) !== FALSE) {
+                  $output = array($s => array('type' => 'file'));
+                  return $output;
+                }
+              }
+              // If the required file did not exist in the library files list.
+              if (empty($output)) {
+                watchdog('page not found', $name . ' cannot be found.', NULL, WATCHDOG_WARNING);
+              }
+            }
+            else {
+              watchdog('page not found', '%directory/superfish.js', array('%directory' => $directory), WATCHDOG_ERROR);
+            }
+          break;
+        }
+      break;
+      case 'CSS':
+        $directory .= '/css';
+        switch ($name) {
+          case 'superfish':
+          case 'horizontal':
+            $output = array($directory . '/superfish.css' => array('type' => 'file'));
+            return $output;
+          break;
+          case 'navbar':
+          case 'vertical':
+            $output = array($directory . '/superfish-' . $name . '.css' => array('type' => 'file'));
+            return $output;
+          break;
+        }
+      break;
+    }
+  }
+}
+
+/**
  * Helper function to clean up arrays.
  */
 function array_remove_empty($haystack) {
@@ -1179,44 +1350,6 @@ function array_remove_empty($haystack) {
     }
   }
   return $haystack;
-}
-
-/**
- * Implements hook_init().
- */
-function superfish_init() {
-  // Ensure the Libraries API module is installed and working.
-  if (module_exists('libraries') && function_exists('libraries_get_path')) {
-    $directory = libraries_get_path('superfish');
-  }
-  // Otherwise use the default directory.
-  else {
-    $directory = 'sites/all/libraries/superfish';
-  }
-  $slp_default = $directory . "/jquery.hoverIntent.minified.js\n" .
-    $directory . "/jquery.bgiframe.min.js\n" .
-    $directory . "/superfish.js\n" .
-    $directory . "/supersubs.js\n" .
-    $directory . "/supposition.js\n" .
-    $directory . "/sftouchscreen.js\n" .
-    $directory . "/sfsmallscreen.js";
-
-  $sf_library = variable_get('superfish_slp', $slp_default);
-  $sf_library = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", trim($sf_library));
-  $sf_library = explode("\n", $sf_library);
-  foreach ($sf_library as $s) {
-    if (file_exists($s)) {
-      drupal_add_js($s, 'file');
-    }
-  }
-
-  if (file_exists($directory . '/superfish.js')) {
-    drupal_add_js(drupal_get_path('module', 'superfish') . '/superfish.js', 'file');
-  }
-
-  drupal_add_css($directory . '/css/superfish.css', 'file');
-  drupal_add_css($directory . '/css/superfish-vertical.css', 'file');
-  drupal_add_css($directory . '/css/superfish-navbar.css', 'file');
 }
 
 /**
