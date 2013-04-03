@@ -155,14 +155,9 @@ function superfish_block_configure($delta = 0) {
   $form['sf-settings']['superfish_slide_' . $delta] = array(
     '#type' => 'select',
     '#title' => t('Slide-in effect'),
-    '#description' => '<em>(' . t('Default') . ': ' . t('Vertical') . ')</em>',
+    '#description' => '<em>(' . t('Default') . ': ' . t('Vertical') . ')</em><br />' . ((count(superfish_effects()) == 4) ? t('jQuery Easing plugin is not installed.') . '<br />' . t('The plugin provides a handful number of animation effects, they can be used by uploading the \'jquery.easing.js\' file to the libraries directory within the \'easing\' directory (for example: sites/all/libraries/easing/jquery.easing.js). Refresh this page after the plugin is uploaded, this will make more effects available in the above list.') . '<br />' : '') . '<strong>' . t('Important') . ':</strong> ' . t('Easing effects require jQuery 1.6.1 or higher. If you need to update your jQuery to version 1.6.1 or higher, please use the jQuery Update module.'),
     '#default_value' => variable_get('superfish_slide_' . $delta, 'vertical'),
-    '#options' => array(
-      'none' => t('None'),
-      'vertical' => t('Vertical'),
-      'horizontal' => t('Horizontal'),
-      'diagonal' => t('Diagonal')
-    ),
+    '#options' => superfish_effects(),
   );
   $form['sf-settings']['superfish_arrow_' . $delta] = array(
     '#type' => 'checkbox',
@@ -770,17 +765,36 @@ function superfish_contents($delta = 0) {
   $sfoptions['pathClass'] = ($sfsettings['type'] == 'navbar') ? variable_get('superfish_pathclass_' . $delta, 'active-trail') : '';
   $sfoptions['pathLevels'] = (variable_get('superfish_pathlevels_' . $delta, 1) != 1) ? variable_get('superfish_pathlevels_' . $delta, 1) : '';
   $sfoptions['delay'] = (variable_get('superfish_delay_' . $delta, 800) != 800) ? variable_get('superfish_delay_' . $delta, 800) : '';
+  $sfoptions['animation']['opacity'] = 'show';
   $slide = variable_get('superfish_slide_' . $delta, 'vertical');
-  if ($slide == 'none') {
-    $sfoptions['animation'] = array('opacity' => 'show');
+  if (strpos($slide, '_') && superfish_library('javascript', 'jquery.easing.js', 'check')) {
+    $slide = explode('_', $slide);
+    switch ($slide[1]) {
+      case 'vertical':
+        $sfoptions['animation']['height'] = array('show', $slide[0]);
+      break;
+      case 'horizontal':
+        $sfoptions['animation']['width'] = array('show', $slide[0]);
+      break;
+      case 'diagonal':
+        $sfoptions['animation']['height'] = array('show', $slide[0]);
+        $sfoptions['animation']['width'] = array('show', $slide[0]);
+      break;
+    }
+    $block_js = array_merge($block_js, superfish_library('javascript', 'easing', 'add'));
   }
   else {
-    $sfoptions['animation'] = array('opacity' => 'show');
-    if ($slide == 'vertical' || $slide == 'diagonal') {
-      $sfoptions['animation']['height'] = 'show';
-    }
-    if ($slide == 'horizontal' || $slide == 'diagonal') {
-      $sfoptions['animation']['width'] = 'show';
+    switch ($slide) {
+      case 'vertical':
+        $sfoptions['animation']['height'] = 'show';
+      break;
+      case 'horizontal':
+        $sfoptions['animation']['width'] = 'show';
+      break;
+      case 'diagonal':
+        $sfoptions['animation']['height'] = 'show';
+        $sfoptions['animation']['width'] = 'show';
+      break;
     }
   }
   $speed = variable_get('superfish_speed_' . $delta, 'fast');
@@ -1209,6 +1223,113 @@ function superfish_styles($display = 'list', $style = NULL) {
 }
 
 /**
+ * Generate a list of available slide-in effects.
+ */
+function superfish_effects() {
+  $output = array(
+    'none' => '- ' . t('None') . ' -',
+    'vertical' => t('Vertical'),
+    'horizontal' => t('Horizontal'),
+    'diagonal' => t('Diagonal'));
+  // Ensure the Libraries API module is installed and working.
+  if (module_exists('libraries') && function_exists('libraries_get_path') && libraries_get_path('easing') != '') {
+    $file = libraries_get_path('easing') . '/jquery.easing.js';
+  }
+  // Otherwise look for the file in the default location.
+  else {
+    $file = 'sites/all/libraries/easing/jquery.easing.js';
+  }
+  if (file_exists($file)) {
+    $easing_types = array(
+      'easeInSine_vertical' => 'easeInSine (' . t('Vertical') . ')',
+      'easeInSine_horizontal' => 'easeInSine (' . t('Horizontal') . ')',
+      'easeInSine_diagonal' => 'easeInSine (' . t('Diagonal') . ')',
+      'easeInQuint_vertical' => 'easeInQuint (' . t('Vertical') . ')',
+      'easeInQuint_horizontal' => 'easeInQuint (' . t('Horizontal') . ')',
+      'easeInQuint_diagonal' => 'easeInQuint (' . t('Diagonal') . ')',
+      'easeInQuart_vertical' => 'easeInQuart (' . t('Vertical') . ')',
+      'easeInQuart_horizontal' => 'easeInQuart (' . t('Horizontal') . ')',
+      'easeInQuart_diagonal' => 'easeInQuart (' . t('Diagonal') . ')',
+      'easeInQuad_vertical' => 'easeInQuad (' . t('Vertical') . ')',
+      'easeInQuad_horizontal' => 'easeInQuad (' . t('Horizontal') . ')',
+      'easeInQuad_diagonal' => 'easeInQuad (' . t('Diagonal') . ')',
+      'easeInExpo_vertical' => 'easeInExpo (' . t('Vertical') . ')',
+      'easeInExpo_horizontal' => 'easeInExpo (' . t('Horizontal') . ')',
+      'easeInExpo_diagonal' => 'easeInExpo (' . t('Diagonal') . ')',
+      'easeInElastic_vertical' => 'easeInElastic (' . t('Vertical') . ')',
+      'easeInElastic_horizontal' => 'easeInElastic (' . t('Horizontal') . ')',
+      'easeInElastic_diagonal' => 'easeInElastic (' . t('Diagonal') . ')',
+      'easeInCubic_vertical' => 'easeInCubic (' . t('Vertical') . ')',
+      'easeInCubic_horizontal' => 'easeInCubic (' . t('Horizontal') . ')',
+      'easeInCubic_diagonal' => 'easeInCubic (' . t('Diagonal') . ')',
+      'easeInCirc_vertical' => 'easeInCirc (' . t('Vertical') . ')',
+      'easeInCirc_horizontal' => 'easeInCirc (' . t('Horizontal') . ')',
+      'easeInCirc_diagonal' => 'easeInCirc (' . t('Diagonal') . ')',
+      'easeInBounce_vertical' => 'easeInBounce (' . t('Vertical') . ')',
+      'easeInBounce_horizontal' => 'easeInBounce (' . t('Horizontal') . ')',
+      'easeInBounce_diagonal' => 'easeInBounce (' . t('Diagonal') . ')',
+      'easeInBack_vertical' => 'easeInBack (' . t('Vertical') . ')',
+      'easeInBack_horizontal' => 'easeInBack (' . t('Horizontal') . ')',
+      'easeInBack_diagonal' => 'easeInBack (' . t('Diagonal') . ')',
+      'easeOutQuint_vertical' => 'easeOutQuint (' . t('Vertical') . ')',
+      'easeOutQuint_horizontal' => 'easeOutQuint (' . t('Horizontal') . ')',
+      'easeOutQuint_diagonal' => 'easeOutQuint (' . t('Diagonal') . ')',
+      'easeOutQuart_vertical' => 'easeOutQuart (' . t('Vertical') . ')',
+      'easeOutQuart_horizontal' => 'easeOutQuart (' . t('Horizontal') . ')',
+      'easeOutQuart_diagonal' => 'easeOutQuart (' . t('Diagonal') . ')',
+      'easeOutQuad_vertical' => 'easeOutQuad (' . t('Vertical') . ')',
+      'easeOutQuad_horizontal' => 'easeOutQuad (' . t('Horizontal') . ')',
+      'easeOutQuad_diagonal' => 'easeOutQuad (' . t('Diagonal') . ')',
+      'easeOutExpo_vertical' => 'easeOutExpo (' . t('Vertical') . ')',
+      'easeOutExpo_horizontal' => 'easeOutExpo (' . t('Horizontal') . ')',
+      'easeOutExpo_diagonal' => 'easeOutExpo (' . t('Diagonal') . ')',
+      'easeOutElastic_vertical' => 'easeOutElastic (' . t('Vertical') . ')',
+      'easeOutElastic_horizontal' => 'easeOutElastic (' . t('Horizontal') . ')',
+      'easeOutElastic_diagonal' => 'easeOutElastic (' . t('Diagonal') . ')',
+      'easeOutCubic_vertical' => 'easeOutCubic (' . t('Vertical') . ')',
+      'easeOutCubic_horizontal' => 'easeOutCubic (' . t('Horizontal') . ')',
+      'easeOutCubic_diagonal' => 'easeOutCubic (' . t('Diagonal') . ')',
+      'easeOutCirc_vertical' => 'easeOutCirc (' . t('Vertical') . ')',
+      'easeOutCirc_horizontal' => 'easeOutCirc (' . t('Horizontal') . ')',
+      'easeOutCirc_diagonal' => 'easeOutCirc (' . t('Diagonal') . ')',
+      'easeOutBounce_vertical' => 'easeOutBounce (' . t('Vertical') . ')',
+      'easeOutBounce_horizontal' => 'easeOutBounce (' . t('Horizontal') . ')',
+      'easeOutBounce_diagonal' => 'easeOutBounce (' . t('Diagonal') . ')',
+      'easeOutBack_vertical' => 'easeOutBack (' . t('Vertical') . ')',
+      'easeOutBack_horizontal' => 'easeOutBack (' . t('Horizontal') . ')',
+      'easeOutBack_diagonal' => 'easeOutBack (' . t('Diagonal') . ')',
+      'easeInOutQuint_vertical' => 'easeInOutQuint (' . t('Vertical') . ')',
+      'easeInOutQuint_horizontal' => 'easeInOutQuint (' . t('Horizontal') . ')',
+      'easeInOutQuint_diagonal' => 'easeInOutQuint (' . t('Diagonal') . ')',
+      'easeInOutQuart_vertical' => 'easeInOutQuart (' . t('Vertical') . ')',
+      'easeInOutQuart_horizontal' => 'easeInOutQuart (' . t('Horizontal') . ')',
+      'easeInOutQuart_diagonal' => 'easeInOutQuart (' . t('Diagonal') . ')',
+      'easeInOutQuad_vertical' => 'easeInOutQuad (' . t('Vertical') . ')',
+      'easeInOutQuad_horizontal' => 'easeInOutQuad (' . t('Horizontal') . ')',
+      'easeInOutQuad_diagonal' => 'easeInOutQuad (' . t('Diagonal') . ')',
+      'easeInOutExpo_vertical' => 'easeInOutExpo (' . t('Vertical') . ')',
+      'easeInOutExpo_horizontal' => 'easeInOutExpo (' . t('Horizontal') . ')',
+      'easeInOutExpo_diagonal' => 'easeInOutExpo (' . t('Diagonal') . ')',
+      'easeInOutElastic_vertical' => 'easeInOutElastic (' . t('Vertical') . ')',
+      'easeInOutElastic_horizontal' => 'easeInOutElastic (' . t('Horizontal') . ')',
+      'easeInOutElastic_diagonal' => 'easeInOutElastic (' . t('Diagonal') . ')',
+      'easeInOutCubic_vertical' => 'easeInOutCubic (' . t('Vertical') . ')',
+      'easeInOutCubic_horizontal' => 'easeInOutCubic (' . t('Horizontal') . ')',
+      'easeInOutCubic_diagonal' => 'easeInOutCubic (' . t('Diagonal') . ')',
+      'easeInOutCirc_vertical' => 'easeInOutCirc (' . t('Vertical') . ')',
+      'easeInOutCirc_horizontal' => 'easeInOutCirc (' . t('Horizontal') . ')',
+      'easeInOutCirc_diagonal' => 'easeInOutCirc (' . t('Diagonal') . ')',
+      'easeInOutBounce_vertical' => 'easeInOutBounce (' . t('Vertical') . ')',
+      'easeInOutBounce_horizontal' => 'easeInOutBounce (' . t('Horizontal') . ')',
+      'easeInOutBounce_diagonal' => 'easeInOutBounce (' . t('Diagonal') . ')',
+      'easeInOutBack_vertical' => 'easeInOutBack (' . t('Vertical') . ')',
+      'easeInOutBack_horizontal' => 'easeInOutBack (' . t('Horizontal') . ')',
+      'easeInOutBack_diagonal' => 'easeInOutBack (' . t('Diagonal') . ')');
+    $output = array_merge($output, $easing_types);
+  }
+  return $output;
+}
+
 /**
  * Add require JavaScript and CSS files from the Superfish library.
  */
