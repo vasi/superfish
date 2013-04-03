@@ -96,6 +96,7 @@ function superfish_block_configure($delta = 0) {
   $form['sf-menu']['superfish_expanded_' . $delta] = array(
     '#type' => 'checkbox',
     '#title' => t('Take "Expanded" option into effect.'),
+    '#description' => t('By enabling this option, only parent menu items with <em>Expanded</em> option enabled will have their submenus appear.') . ' <em>(' . t('Default') . ': ' . t('disabled') . ')</em>',
     '#default_value' => variable_get('superfish_expanded_' . $delta, 0),
   );
   $form['sf-settings'] = array(
@@ -118,6 +119,7 @@ function superfish_block_configure($delta = 0) {
   $form['sf-settings']['superfish_style_' . $delta] = array(
     '#type' => 'select',
     '#title' => t('Style'),
+    '#description' => '<em>(' . t('Default') . ': ' . t('None') . ')</em>',
     '#default_value' => variable_get('superfish_style_' . $delta, 'none'),
     '#options' => superfish_styles(),
   );
@@ -1070,22 +1072,22 @@ function superfish_block_validate($form, &$form_state) {
       form_set_error('superfish_pathclass_' . $delta, t('<strong>Path class</strong>: unacceptable value entered.'));
     }
     if ($touch == 2 && $touchbp == '') {
-      form_set_error('superfish_touchbp_' . $delta, t('<strong>sf-Touchscreen: Breakpoint</strong>: field cannot be empty.'));
+      form_set_error('superfish_touchbp_' . $delta, t('<strong>sf-Touchscreen Breakpoint</strong>: field cannot be empty.'));
     }
     if (!is_numeric($touchbp)) {
-      form_set_error('superfish_touchbp_' . $delta, t('<strong>sf-Touchscreen: Breakpoint</strong>: unacceptable value entered.'));
+      form_set_error('superfish_touchbp_' . $delta, t('<strong>sf-Touchscreen Breakpoint</strong>: unacceptable value entered.'));
     }
     if ($touch == 3 && $touchua == 1 && $touchual == '') {
-      form_set_error('superfish_touchual_' . $delta, t('<strong>sf-Touchscreen: Custom list of user agents</strong>: field cannot be empty.'));
+      form_set_error('superfish_touchual_' . $delta, t('<strong>sf-Touchscreen Custom list of user agents</strong>: field cannot be empty.'));
     }
     if ($small == 2 && $smallbp == '') {
-      form_set_error('superfish_smallbp_' . $delta, t('<strong>sf-Smallscreen: Breakpoint</strong>: field cannot be empty.'));
+      form_set_error('superfish_smallbp_' . $delta, t('<strong>sf-Smallscreen Breakpoint</strong>: field cannot be empty.'));
     }
     if (!is_numeric($smallbp)) {
-      form_set_error('superfish_smallbp_' . $delta, t('<strong>sf-Smallscreen: Breakpoint</strong>: unacceptable value entered.'));
+      form_set_error('superfish_smallbp_' . $delta, t('<strong>sf-Smallscreen Breakpoint</strong>: unacceptable value entered.'));
     }
     if ($small == 3 && $smallua == 1 && $smallual == '') {
-      form_set_error('superfish_smallual_' . $delta, t('<strong>sf-Smallscreen: Custom list of user agents</strong>: field cannot be empty.'));
+      form_set_error('superfish_smallual_' . $delta, t('<strong>sf-Smallscreen Custom list of user agents</strong>: field cannot be empty.'));
     }
     if (!is_numeric($minwidth)) {
       form_set_error('superfish_minwidth_' . $delta, t('<strong>Supersubs minimum width</strong>: unacceptable value entered.'));
@@ -1142,7 +1144,7 @@ function superfish_styles($display = 'list', $style = NULL) {
   }
   $files = (file_exists($directory)) ? file_scan_directory($directory, '/.*\.css$/', array('key' => 'name')) : '';
   if ($display == 'list') {
-    $output = array('none' => t('None'));
+    $output = array('none' => '- ' . t('None') . ' -');
     if (is_array($files)) {
       foreach ($files as $file) {
         $output[$file->name] = drupal_ucfirst($file->name);
@@ -1155,6 +1157,7 @@ function superfish_styles($display = 'list', $style = NULL) {
       $output = $files[$style]->uri;
     }
     else {
+      watchdog('page not found', $files[$style]->uri, NULL, WATCHDOG_ERROR);
       $output = '';
     }
   }
@@ -1517,7 +1520,7 @@ function theme_superfish_build($variables) {
         $link_class_current = $menu_item['link']['localized_options']['attributes']['class'];
         $link_class = array_merge($link_class_current, array_remove_empty($link_class));
       }
-      $menu_item['link']['localized_options']['attributes']['class'] = $link_class;
+      $menu_item['link']['localized_options']['attributes']['class'] = array_remove_empty($link_class);
 
       $link_options += $menu_item['link']['localized_options'];
 
