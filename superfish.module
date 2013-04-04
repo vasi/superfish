@@ -1624,7 +1624,7 @@ function theme_superfish_build($variables) {
   $trail = $variables['trail'];
   // Keep $sfsettings untouched as we need to pass it to the child menus.
   $settings = $sfsettings = $variables['sfsettings'];
-  $megamenu = $settings['megamenu'];
+  $megamenu = $megamenu_below = $settings['megamenu'];
   $total_children = $parent_children = $single_children = 0;
   $i = 1;
 
