@@ -1215,7 +1215,7 @@ function superfish_styles($display = 'list', $style = NULL) {
       $output = $files[$style]->uri;
     }
     else {
-      watchdog('page not found', $files[$style]->uri, NULL, WATCHDOG_ERROR);
+      watchdog('page not found', 'Required files for the Superfish \'%style\' style cannot be found.', array('%style' => $style), WATCHDOG_WARNING);
       $output = '';
     }
   }
@@ -1375,7 +1375,8 @@ function superfish_library($type = NULL, $name = NULL, $action = 'add') {
               return TRUE;
             }
             else {
-              watchdog('page not found', $directory . (($type == 'CSS') ? '/css' : '') . '/' . $name, NULL, WATCHDOG_ERROR);
+              $file = $directory . (($type == 'CSS') ? '/css' : '') . '/' . $name;
+              watchdog('page not found', '%file', array('%file' => $file), WATCHDOG_ERROR);
               return FALSE;
             }
           }
@@ -1390,7 +1391,7 @@ function superfish_library($type = NULL, $name = NULL, $action = 'add') {
               return TRUE;
             }
             else {
-              watchdog('page not found', $directory . '/superfish.css', NULL, WATCHDOG_WARNING);
+              watchdog('page not found', '%directory/superfish.css', array('%directory' => $directory), WATCHDOG_WARNING);
               return FALSE;
             }
           break;
@@ -1400,7 +1401,7 @@ function superfish_library($type = NULL, $name = NULL, $action = 'add') {
               return TRUE;
             }
             else {
-              watchdog('page not found', $directory . '/superfish-' . $name . '.css', NULL, WATCHDOG_WARNING);
+              watchdog('page not found', '%directory/superfish-%name.css', array('%directory' => $directory, '%name' => $name), WATCHDOG_WARNING);
               return FALSE;
             }
           break;
@@ -1430,7 +1431,7 @@ function superfish_library($type = NULL, $name = NULL, $action = 'add') {
               }
               // If the required file did not exist in the library files list.
               if (empty($output)) {
-                watchdog('page not found', $name . ' cannot be found.', NULL, WATCHDOG_WARNING);
+                watchdog('page not found', '%name cannot be found.', array('%name' => $name), WATCHDOG_WARNING);
               }
             }
             else {
