@@ -703,7 +703,7 @@ function superfish_block_save($delta = 0, $edit = array()) {
   variable_set('superfish_itemcounter_' . $delta, $edit['superfish_itemcounter_' . $delta]);
   variable_set('superfish_itemdepth_' . $delta, $edit['superfish_itemdepth_' . $delta]);
   variable_set('superfish_use_link_theme_' . $delta, $edit['superfish_use_link_theme_' . $delta]);
-  variable_set('superfish_use_item_theme_' . $delta, $edit['superfish_use_link_theme_' . $delta]);
+  variable_set('superfish_use_item_theme_' . $delta, $edit['superfish_use_item_theme_' . $delta]);
   variable_set('superfish_hhldescription_' . $delta, $edit['superfish_hhldescription_' . $delta]);
   variable_set('superfish_hldescription_' . $delta, $edit['superfish_hldescription_' . $delta]);
   variable_set('superfish_hldmenus_' . $delta, $edit['superfish_hldmenus_' . $delta]);
@@ -1886,7 +1886,7 @@ function theme_superfish_menu_item($variables) {
     $output .= theme('superfish_menu_item_link', $link_variables);
   }
   else {
-    $output .= l($element['link']['title'], $element['item']['link']['href'], $element['localized_options']);
+    $output .= l($element['item']['link']['title'], $element['item']['link']['href'], $element['localized_options']);
   }
   $output .= isset($properties['wrapper']['whl'][1]) ? $properties['wrapper']['whl'][1] : '';
   $output .= ($properties['megamenu']['megamenu_wrapper']) ? '<ul class="sf-megamenu"><li class="sf-megamenu-wrapper ' . $element['attributes']['class'] . '">' : '';
