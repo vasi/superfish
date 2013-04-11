@@ -1016,62 +1016,61 @@ function superfish_contents($delta = 0) {
           'superfish' => array('admin/structure/menu/manage', array($menu_name)),
         )
       );
-    }
 
-    // Creating a title for the <select> title.
-    if ($smallscreen > 0 && superfish_library('javascript', 'sfsmallscreen.js', 'check')) {
-      $smallset = variable_get('superfish_smallset_' . $delta, '');
-      if (empty($smallset)) {
-        $sfplugins['smallscreen']['title'] = $output['subject'];
-      }
-      else {
-        $sfplugins['smallscreen']['title'] = $smallset;
-      }
-    }
-    $sfplugins = array_remove_empty($sfplugins);
-
-    // Prepare the JavaScript settings.
-    $javascript['superfish'][$delta]['id'] = $delta;
-    $javascript['superfish'][$delta]['sf'] = isset($sfoptions) ? $sfoptions : array();
-    if (!empty($sfplugins)) {
-      $javascript['superfish'][$delta]['plugins'] = $sfplugins;
-    }
-    // Adding required Javascript.
-    if (superfish_library('javascript', 'superfish.js', 'check')) {
-      $block_js = array_merge($block_js, superfish_library('javascript', 'superfish.js', 'add'));
-      if (superfish_library('javascript', 'drupal_behavior', 'check')) {
-        $block_js = array_merge($block_js, array(array('data' => $javascript, 'type' => 'setting')));
-        $block_js = array_merge($block_js, superfish_library('javascript', 'drupal_behavior', 'add'));
-      }
-    }
-
-    // Adding required CSS files
-    if (superfish_library('CSS', 'superfish', 'check')) {
-      $block_css = array_merge($block_css, superfish_library('CSS', 'superfish', 'add'));
-    }
-    if (superfish_library('CSS', $sfsettings['type'], 'check')) {
-      $block_css = array_merge($block_css, superfish_library('CSS', $sfsettings['type'], 'add'));
-    }
-    if ($sfsettings['style'] != 'none' && superfish_styles('path', $sfsettings['style']) != '') {
-      $block_css = array_merge($block_css, array(superfish_styles('path', $sfsettings['style']) => array('type' => 'file')));
-    }
-    $extracss = variable_get('superfish_pathcss_' . $delta, '');
-    if ($extracss) {
-      if (strpos($extracss, ',')) {
-        $extracss = explode(',', $extracss);
-        foreach ($extracss as $c) {
-          $block_css = array_merge($block_css, array($c => array('type' => 'file')));
+      // Creating a title for the <select> title.
+      if ($smallscreen > 0 && superfish_library('javascript', 'sfsmallscreen.js', 'check')) {
+        $smallset = variable_get('superfish_smallset_' . $delta, '');
+        if (empty($smallset)) {
+          $sfplugins['smallscreen']['title'] = $output['subject'];
+        }
+        else {
+          $sfplugins['smallscreen']['title'] = $smallset;
         }
       }
-      else {
-        $block_css = array_merge($block_css, array($extracss => array('type' => 'file')));
-      }
-    }
+      $sfplugins = array_remove_empty($sfplugins);
 
-    $output['content']['#attached'] = array(
-      'css' => $block_css,
-      'js' => $block_js,
-    );
+      // Prepare the JavaScript settings.
+      $javascript['superfish'][$delta]['id'] = $delta;
+      $javascript['superfish'][$delta]['sf'] = isset($sfoptions) ? $sfoptions : array();
+      if (!empty($sfplugins)) {
+        $javascript['superfish'][$delta]['plugins'] = $sfplugins;
+      }
+      // Adding required Javascript.
+      if (superfish_library('javascript', 'superfish.js', 'check')) {
+        $block_js = array_merge($block_js, superfish_library('javascript', 'superfish.js', 'add'));
+        if (superfish_library('javascript', 'drupal_behavior', 'check')) {
+          $block_js = array_merge($block_js, array(array('data' => $javascript, 'type' => 'setting')));
+          $block_js = array_merge($block_js, superfish_library('javascript', 'drupal_behavior', 'add'));
+        }
+      }
+
+      // Adding required CSS files
+      if (superfish_library('CSS', 'superfish', 'check')) {
+        $block_css = array_merge($block_css, superfish_library('CSS', 'superfish', 'add'));
+      }
+      if (superfish_library('CSS', $sfsettings['type'], 'check')) {
+        $block_css = array_merge($block_css, superfish_library('CSS', $sfsettings['type'], 'add'));
+      }
+      if ($sfsettings['style'] != 'none' && superfish_styles('path', $sfsettings['style']) != '') {
+        $block_css = array_merge($block_css, array(superfish_styles('path', $sfsettings['style']) => array('type' => 'file')));
+      }
+      $extracss = variable_get('superfish_pathcss_' . $delta, '');
+      if ($extracss) {
+        if (strpos($extracss, ',')) {
+          $extracss = explode(',', $extracss);
+          foreach ($extracss as $c) {
+            $block_css = array_merge($block_css, array($c => array('type' => 'file')));
+          }
+        }
+        else {
+          $block_css = array_merge($block_css, array($extracss => array('type' => 'file')));
+        }
+      }
+      $output['content']['#attached'] = array(
+        'css' => $block_css,
+        'js' => $block_js,
+      );
+    }
   }
   return $output;
 }
