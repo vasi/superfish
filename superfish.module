@@ -1045,18 +1045,18 @@ function superfish_contents($delta = 0) {
         $block_css = array_merge($block_css, superfish_library('CSS', $sfsettings['type'], 'add'));
       }
       if ($sfsettings['style'] != 'none' && superfish_styles('path', $sfsettings['style']) != '') {
-        $block_css = array_merge($block_css, array(superfish_styles('path', $sfsettings['style']) => array('type' => 'file')));
+        $block_css = array_merge($block_css, array(superfish_styles('path', $sfsettings['style']) => array('type' => 'file', 'weight' => 500)));
       }
       $extracss = variable_get('superfish_pathcss_' . $delta, '');
       if ($extracss) {
         if (strpos($extracss, ',')) {
           $extracss = explode(',', $extracss);
           foreach ($extracss as $c) {
-            $block_css = array_merge($block_css, array($c => array('type' => 'file')));
+            $block_css = array_merge($block_css, array($c => array('type' => 'file', 'weight' => 510)));
           }
         }
         else {
-          $block_css = array_merge($block_css, array($extracss => array('type' => 'file')));
+          $block_css = array_merge($block_css, array($extracss => array('type' => 'file', 'weight' => 510)));
         }
       }
       $output['content']['#attached'] = array(
@@ -1406,18 +1406,29 @@ function superfish_library($type = NULL, $name = NULL, $action = 'add') {
       case 'javascript':
         switch ($name) {
           case 'easing':
-            $output = array($directory_easing . '/jquery.easing.js' => array('type' => 'file'));
+            $output = array($directory_easing . '/jquery.easing.js' => array('type' => 'file', 'weight' => 490));
             return $output;
           break;
           case 'drupal_behavior':
-            $output = array(drupal_get_path('module', 'superfish') . '/superfish.js' => array('type' => 'file'));
+            $output = array(drupal_get_path('module', 'superfish') . '/superfish.js' => array('type' => 'file', 'weight' => 495));
             return $output;
           break;
-          default :
+          default:
             if (file_exists($directory . '/superfish.js')) {
               foreach ($sf_library as $s) {
                 if (strpos($s, $name) !== FALSE) {
-                  $output = array($s => array('type' => 'file'));
+                  switch ($name) {
+                    case 'superfish':
+                      $weight = 480;
+                    break;
+                    case 'supersubs':
+                      $weight = 490;
+                    break;
+                    default:
+                      $weight = 470;
+                    break;  
+                  }
+                  $output = array($s => array('type' => 'file', 'weight' => $weight));
                   return $output;
                 }
               }
@@ -1437,12 +1448,12 @@ function superfish_library($type = NULL, $name = NULL, $action = 'add') {
         switch ($name) {
           case 'superfish':
           case 'horizontal':
-            $output = array($directory . '/superfish.css' => array('type' => 'file'));
+            $output = array($directory . '/superfish.css' => array('type' => 'file', 'weight' => 480));
             return $output;
           break;
           case 'navbar':
           case 'vertical':
-            $output = array($directory . '/superfish-' . $name . '.css' => array('type' => 'file'));
+            $output = array($directory . '/superfish-' . $name . '.css' => array('type' => 'file', 'weight' => 490));
             return $output;
           break;
         }
