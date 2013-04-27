@@ -34,7 +34,7 @@ function superfish_requirements($phase) {
       $library = libraries_get_libraries();
       $superfish_installed = (isset($library['superfish'])) ? TRUE : FALSE;
     }
-    elseif (file_exists('sites/all/libraries/superfish/superfish.js')) {
+    elseif (file_exists('sites/all/libraries/superfish/superfish.js') || file_exists('profiles/' . drupal_get_profile() . '/libraries/superfish/superfish.js')) {
       $superfish_installed = TRUE;
     }
     else {
