@@ -14,6 +14,9 @@ function superfish_library_path() {
     $directory = libraries_get_path('superfish');
   }
   // Otherwise use the default directory.
+  elseif (file_exists('profiles/' . drupal_get_profile() . '/libraries/superfish')) {
+    $directory = 'profiles/' . drupal_get_profile() . '/libraries/superfish';
+  }
   else {
     $directory = 'sites/all/libraries/superfish';
   }

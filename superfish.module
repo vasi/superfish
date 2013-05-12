@@ -1189,6 +1189,9 @@ function superfish_styles($display = 'list', $style = NULL) {
     $directory = libraries_get_path('superfish') . '/style';
   }
   // Otherwise use the default directory.
+  elseif (file_exists('profiles/' . drupal_get_profile() . '/libraries/superfish/style')) {
+    $directory = 'profiles/' . drupal_get_profile() . '/libraries/superfish/style';
+  }
   else {
     $directory = 'sites/all/libraries/superfish/style';
   }
@@ -1228,6 +1231,9 @@ function superfish_effects() {
     $file = libraries_get_path('easing') . '/jquery.easing.js';
   }
   // Otherwise look for the file in the default location.
+  elseif (file_exists('profiles/' . drupal_get_profile() . '/libraries/easing/jquery.easing.js')) {
+    $file = 'profiles/' . drupal_get_profile() . '/libraries/easing/jquery.easing.js';
+  }
   else {
     $file = 'sites/all/libraries/easing/jquery.easing.js';
   }
@@ -1327,13 +1333,26 @@ function superfish_effects() {
  */
 function superfish_library($type = NULL, $name = NULL, $action = 'add') {
   // Ensure the Libraries API module is installed and working and is able to find the library.
-  if (module_exists('libraries') && function_exists('libraries_get_path') && libraries_get_path('superfish') != '') {
+  if (module_exists('libraries') && function_exists('libraries_get_path' && libraries_get_path('superfish') != '')) {
     $directory = libraries_get_path('superfish');
+  }
+  // Otherwise use the default directory.
+  elseif (file_exists('profiles/' . drupal_get_profile() . '/libraries/superfish')) {
+    $directory = 'profiles/' . drupal_get_profile() . '/libraries/superfish';
+  }
+  else {
+    $directory = 'sites/all/libraries/superfish';
+  }
+
+  // Ensure the Libraries API module is installed and working and is able to find the library.
+  if (module_exists('libraries') && function_exists('libraries_get_path' && libraries_get_path('easing') != '')) {
     $directory_easing = libraries_get_path('easing');
   }
   // Otherwise use the default directory.
+  elseif (file_exists('profiles/' . drupal_get_profile() . '/libraries/easing')) {
+    $directory_easing = 'profiles/' . drupal_get_profile() . '/libraries/easing';
+  }
   else {
-    $directory = 'sites/all/libraries/superfish';
     $directory_easing = 'sites/all/libraries/easing';
   }
   $slp_default = $directory . "/jquery.hoverIntent.minified.js\n" .
@@ -1426,7 +1445,7 @@ function superfish_library($type = NULL, $name = NULL, $action = 'add') {
                     break;
                     default:
                       $weight = 470;
-                    break;  
+                    break;
                   }
                   $output = array($s => array('type' => 'file', 'weight' => $weight));
                   return $output;
