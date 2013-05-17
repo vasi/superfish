@@ -1836,7 +1836,10 @@ function theme_superfish_build($variables) {
               'megamenu_content' => $megamenu_content,
             ),
             'use_link_theme' => $settings['use_link_theme'],
-            'wrapper' => $whl,
+            'wrapper' => array(
+              'wul' => $wul,
+              'whl' => $whl,
+            ),
           ),
         );
         $output['content'] .= theme('superfish_menu_item', $item_variables);
@@ -1858,11 +1861,11 @@ function theme_superfish_build($variables) {
         }
         $output['content'] .= isset($whl[1]) ? $whl[1] : '';
         $output['content'] .= ($megamenu_wrapper) ? '<ul class="sf-megamenu"><li class="sf-megamenu-wrapper ' . $item_class . '">' : '';
-        $output['content'] .= ($show_children) ? (isset($wul[0]) ? $wul[0] : '') : '';
         $output['content'] .= ($show_children) ? (($megamenu_content) ? '<ol>' : '<ul>') : '';
+        $output['content'] .= ($show_children) ? (isset($wul[0]) ? $wul[0] : '') : '';
         $output['content'] .= ($show_children) ? $children['content'] : '';
-        $output['content'] .= ($show_children) ? (($megamenu_content) ? '</ol>' : '</ul>') : '';
         $output['content'] .= ($show_children) ? (isset($wul[1]) ? $wul[1] : '') : '';
+        $output['content'] .= ($show_children) ? (($megamenu_content) ? '</ol>' : '</ul>') : '';
         $output['content'] .= ($megamenu_wrapper) ? '</li></ul>' : '';
         $output['content'] .= ($megamenu_column) ? '</div>' : '';
         $output['content'] .= '</li>';
@@ -1890,11 +1893,11 @@ function theme_superfish_menu_item($variables) {
   $sub_menu = '';
 
   if ($element['below']) {
-    $sub_menu .= isset($variables['wrapper']['wul'][0]) ? $variables['wrapper']['wul'][0] : '';
     $sub_menu .= ($properties['megamenu']['megamenu_content']) ? '<ol>' : '<ul>';
+    $sub_menu .= isset($properties['wrapper']['wul'][0]) ? $properties['wrapper']['wul'][0] : '';
     $sub_menu .= $element['below'];
+    $sub_menu .= isset($properties['wrapper']['wul'][1]) ? $properties['wrapper']['wul'][1] : '';
     $sub_menu .= ($properties['megamenu']['megamenu_content']) ? '</ol>' : '</ul>';
-    $sub_menu .= isset($variables['wrapper']['wul'][1]) ? $variables['wrapper']['wul'][1] : '';
   }
 
   $output = '<li' . drupal_attributes($element['attributes']) . '>';
