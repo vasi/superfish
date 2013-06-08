@@ -209,6 +209,12 @@ function superfish_block_configure($delta = 0) {
     '#description' => t('Prevents accidental firing of animations by waiting until the user\'s mouse slows down enough, hence determinig user\'s <em>intent</em>.') . ' <em>(' . t('Default') . ': ' . t('enabled') . ')</em>',
     '#default_value' => variable_get('superfish_hid_' . $delta, 1),
   );
+  $form['sf-plugins']['superfish_amw_' . $delta] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Use sf-AutomaticWidth plugin for this menu.'),
+    '#description' => t('Automatically adjusts the menu width to maximum possible.') . ' <em>(' . t('Default') . ': ' . t('disabled') . ')</em><br />' . t('This is limited to Horizontal and NavBar types.'),
+    '#default_value' => variable_get('superfish_amw_' . $delta, 0),
+  );
   $form['sf-plugins']['sf-touchscreen'] = array(
     '#type' => 'fieldset',
     '#title' => t('sf-Touchscreen') . ' <sup>(' . t('Beta') . ')</sup>',
@@ -703,6 +709,7 @@ function superfish_block_save($delta = 0, $edit = array()) {
   variable_set('superfish_bgf_' . $delta, $edit['superfish_bgf_' . $delta]);
   variable_set('superfish_spp_' . $delta, $edit['superfish_spp_' . $delta]);
   variable_set('superfish_hid_' . $delta, $edit['superfish_hid_' . $delta]);
+  variable_set('superfish_amw_' . $delta, $edit['superfish_amw_' . $delta]);
   variable_set('superfish_touch_' . $delta, $edit['superfish_touch_' . $delta]);
   variable_set('superfish_touchbp_' . $delta, $edit['superfish_touchbp_' . $delta]);
   variable_set('superfish_touchua_' . $delta, $edit['superfish_touchua_' . $delta]);
@@ -846,6 +853,11 @@ function superfish_contents($delta = 0) {
   }
   $sfoptions = array_remove_empty($sfoptions);
 
+  if (variable_get('superfish_amw_' . $delta, 0) == 1 && superfish_library('javascript', 'sfautomaticwidth.js', 'check')) {
+    $sfplugins['automaticwidth'] = TRUE;
+    $block_js = array_merge($block_js, superfish_library('javascript', 'sfautomaticwidth', 'add'));
+  }
+  
   $touchscreen = variable_get('superfish_touch_' . $delta, 0);
   if ($touchscreen > 0  && superfish_library('javascript', 'sftouchscreen.js', 'check')) {
     $block_js = array_merge($block_js, superfish_library('javascript', 'sftouchscreen', 'add'));
