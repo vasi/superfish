@@ -1096,7 +1096,7 @@ function superfish_contents($delta = 0) {
         $block_css = array_merge($block_css, superfish_library('CSS', $sfsettings['type'], 'add'));
       }
       if ($sfsettings['style'] != 'none' && superfish_styles('path', $sfsettings['style']) != '') {
-        $block_css = array_merge($block_css, array(superfish_styles('path', $sfsettings['style']) => array('type' => 'file', 'weight' => 500)));
+        $block_css = array_merge($block_css, superfish_styles('path', $sfsettings['style']));
       }
       $extracss = variable_get('superfish_pathcss_' . $delta, '');
       if ($extracss) {
@@ -1267,10 +1267,10 @@ function superfish_styles($display = 'list', $style = NULL) {
   }
   if ($display == 'path' && $style) {
     if (isset($files[$style])) {
-      $output = $files[$style]->uri;
+      $output = array($files[$style]->uri => array('type' => 'file', 'weight' => 500));      
     }
     else {
-      watchdog('page not found', 'Required files for the Superfish \'%style\' style cannot be found.', array('%style' => $style), WATCHDOG_WARNING);
+      watchdog('page not found', 'Cannot find the required files for the Superfish \'%style\' style.', array('%style' => $style), WATCHDOG_WARNING);
       $output = '';
     }
   }
