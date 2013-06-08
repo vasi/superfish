@@ -129,7 +129,6 @@ function superfish_block_configure($delta = 0) {
     '#description' => t('The speed of the animation either in <strong>milliseconds</strong> or pre-defined values (<strong>slow, normal, fast</strong>).') . ' <em>(' . t('Default') . ': fast)</em>',
     '#default_value' => variable_get('superfish_speed_' . $delta, 'fast'),
     '#size' => 15,
-    '#required' => TRUE,
   );
   $form['sf-settings']['superfish_delay_' . $delta] = array(
     '#type' => 'textfield',
@@ -333,7 +332,7 @@ function superfish_block_configure($delta = 0) {
   );
   $form['sf-plugins']['sf-smallscreen']['sf-smallscreen-useragent']['superfish_smalluam_' . $delta] = array(
     '#type' => 'select',
-    '#title' => t('<strong>User agent</strong> detection method:'),
+    '#title' => t('<strong>User agent</strong> detection method'),
     '#description' => '<em>(' . t('Default') . ': ' . t('Client-side (JavaScript)') . ')</em>',
     '#default_value' => variable_get('superfish_smalluam_' . $delta, 0),
     '#options' => array(
@@ -366,7 +365,7 @@ function superfish_block_configure($delta = 0) {
   );
   $form['sf-plugins']['sf-smallscreen']['sf-smallscreen-select']['superfish_smallasa_' . $delta] = array(
     '#type' => 'checkbox',
-    '#title' => t('Add <em>selected</em> attribute to the &lt;option&gt; element with the class <strong>active</strong>'),
+    '#title' => t('Add <em>selected</em> attribute to the &lt;option&gt; element with the class <strong>active</strong> .'),
     '#description' => t('Makes pre-selected the item linked to the active page when the page loads.'),
     '#default_value' => variable_get('superfish_smallasa_' . $delta, 0),
   );
@@ -378,8 +377,7 @@ function superfish_block_configure($delta = 0) {
   );
   $form['sf-plugins']['sf-smallscreen']['sf-smallscreen-select']['sf-smallscreen-select-more']['superfish_smallcmc_' . $delta] = array(
     '#type' => 'checkbox',
-    '#title' => t('Copy the main &lt;ul&gt; classes to the &lt;select&gt;.'),
-    '#description' => ' <em>(' . t('Default') . ': ' . t('disabled') . ')</em>',
+    '#title' => t('Copy the main &lt;ul&gt; classes to the &lt;select&gt;.') . ' <sup><em>(' . t('Default') . ': ' . t('disabled') . ')</em></sup>',
     '#default_value' => variable_get('superfish_smallcmc_' . $delta, 0),
   );
   $form['sf-plugins']['sf-smallscreen']['sf-smallscreen-select']['sf-smallscreen-select-more']['superfish_smallecm_' . $delta] = array(
@@ -397,8 +395,7 @@ function superfish_block_configure($delta = 0) {
   );
   $form['sf-plugins']['sf-smallscreen']['sf-smallscreen-select']['sf-smallscreen-select-more']['superfish_smallchc_' . $delta] = array(
     '#type' => 'checkbox',
-    '#title' => t('Copy the hyperlink classes to the &lt;option&gt; elements of the &lt;select&gt;.'),
-    '#description' => ' <em>(' . t('Default') . ': ' . t('disabled') . ')</em>',
+    '#title' => t('Copy the hyperlink classes to the &lt;option&gt; elements of the &lt;select&gt;.') . ' <sup><em>(' . t('Default') . ': ' . t('disabled') . ')</em></sup>',
     '#default_value' => variable_get('superfish_smallchc_' . $delta, 0),
   );
   $form['sf-plugins']['sf-smallscreen']['sf-smallscreen-select']['sf-smallscreen-select-more']['superfish_smallech_' . $delta] = array(
@@ -470,17 +467,15 @@ $form['sf-plugins']['sf-smallscreen']['sf-smallscreen-accordion'] = array(
     '#type' => 'textfield',
     '#title' => t('Minimum width'),
     '#description' => t('Minimum width for sub-menus, in <strong>em</strong> units.') . ' <em>(' . t('Default') . ': 12)</em>',
-    '#default_value' => variable_get('superfish_minwidth_' . $delta, '12'),
-    '#size' => 20,
-    '#required' => TRUE,
+    '#default_value' => variable_get('superfish_minwidth_' . $delta, 12),
+    '#size' => 10,
   );
   $form['sf-plugins']['sf-supersubs']['superfish_maxwidth_' . $delta] = array(
     '#type' => 'textfield',
     '#title' => t('Maximum width'),
     '#description' => t('Maximum width for sub-menus, in <strong>em</strong> units.') . ' <em>(' . t('Default') . ': 27)</em>',
-    '#default_value' => variable_get('superfish_maxwidth_' . $delta, '27'),
-    '#size' => 20,
-    '#required' => TRUE,
+    '#default_value' => variable_get('superfish_maxwidth_' . $delta, 27),
+    '#size' => 10,
   );
   $form['sf-megamenu'] = array(
     '#type' => 'fieldset',
@@ -841,15 +836,17 @@ function superfish_contents($delta = 0) {
     }
   }
   $speed = variable_get('superfish_speed_' . $delta, 'fast');
-  $sfoptions['speed'] = ((is_numeric($speed)) ? (int)$speed : (($speed == ('slow' || 'normal' || 'fast')) ? '\'' . $speed . '\'': ''));
-  $sfoptions['autoArrows'] = (variable_get('superfish_arrow_' . $delta, 1) == 1) ? TRUE : FALSE;
-  $sfoptions['dropShadows'] = (variable_get('superfish_shadow_' . $delta, 1) == 1) ? TRUE : FALSE;
+  if ($speed != 'normal') {
+    $sfoptions['speed'] = ((is_numeric($speed)) ? (int)$speed : (($speed == ('slow' || 'normal' || 'fast')) ? '\'' . $speed . '\'' : ''));
+  }
+  $sfoptions['autoArrows'] = (variable_get('superfish_arrow_' . $delta, 1) == 0) ? FALSE : '';
+  $sfoptions['dropShadows'] = (variable_get('superfish_shadow_' . $delta, 1) == 0) ? FALSE : '';
+
   if (variable_get('superfish_hid_' . $delta, 1) == 1 && superfish_library('javascript', 'jquery.hoverIntent.minified.js', 'check')) {
-    $sfoptions['disableHI'] = FALSE;
     $block_js = array_merge($block_js, superfish_library('javascript', 'hoverIntent', 'add'));
   }
   else {
-    $sfoptions['disableHI'] = FALSE;
+    $sfoptions['disableHI'] = TRUE;
   }
   $sfoptions = array_remove_empty($sfoptions);
 
@@ -1031,23 +1028,19 @@ function superfish_contents($delta = 0) {
     $sfplugins['supposition'] = TRUE;
     $block_js = array_merge($block_js, superfish_library('javascript', 'supposition', 'add'));
   }
-  else {
-    $sfplugins['supposition'] = FALSE;
-  }
 
   if (variable_get('superfish_bgf_' . $delta, 0) == 1 && superfish_library('javascript', 'jquery.bgiframe.min.js', 'check')) {
     $sfplugins['bgiframe'] = TRUE;
     $block_js = array_merge($block_js, superfish_library('javascript', 'bgiframe', 'add'));
   }
-  else {
-    $sfplugins['bgiframe'] = FALSE;
-  }
 
   if (variable_get('superfish_supersubs_' . $delta, 1) == 1 && superfish_library('javascript', 'supersubs.js', 'check')) {
-    $sfplugins['supersubs']['minWidth'] = variable_get('superfish_minwidth_' . $delta, '12');
-    $sfplugins['supersubs']['maxWidth'] = variable_get('superfish_maxwidth_' . $delta, '27');
-    $sfplugins['supersubs']['extraWidth'] = 1;
     $block_js = array_merge($block_js, superfish_library('javascript', 'supersubs', 'add'));
+    $sfplugins['supersubs']['minWidth'] = (variable_get('superfish_minwidth_' . $delta, 12) != 12) ? $minwdith : '';
+    $sfplugins['supersubs']['maxWidth'] = (variable_get('superfish_maxwidth_' . $delta, 27) != 27) ? $maxwidth : '';
+    if (empty($sfplugins['supersubs']['minWidth']) && empty($sfplugins['supersubs']['maxWidth'])) {
+      $sfplugins['supersubs'] = TRUE;
+    }
   }
 
   $vars = array(
