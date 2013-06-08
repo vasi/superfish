@@ -335,6 +335,15 @@ function superfish_block_configure($delta = 0) {
       1 => t('Server-side (PHP)')
     ),
   );
+  $form['sf-plugins']['sf-smallscreen']['superfish_smallact_' . $delta] = array(
+    '#type' => 'radios',
+    '#title' => t('Select a type'),
+    '#default_value' => variable_get('superfish_smallact_' . $delta, 1),
+    '#options' => array(
+      0 => t('Convert the menu to a &lt;select&gt; element.'),
+      1 => t('Convert the menu to an accordion menu.') . ' <sup>(' . t('Default') . ')</sup>',
+    ),
+  );
   $form['sf-plugins']['sf-smallscreen']['sf-smallscreen-select'] = array(
     '#type' => 'fieldset',
     '#title' => t('&lt;select&gt; settings'),
@@ -414,6 +423,30 @@ function superfish_block_configure($delta = 0) {
     '#default_value' => variable_get('superfish_smallich_' . $delta, ''),
     '#size' => 100,
     '#maxlength' => 1000,
+  );
+$form['sf-plugins']['sf-smallscreen']['sf-smallscreen-accordion'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Accordion settings'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  );
+  $form['sf-plugins']['sf-smallscreen']['sf-smallscreen-accordion']['superfish_smallamt_' . $delta] = array(
+    '#type' => 'textfield',
+    '#title' => t('Accordion menu title'),
+    '#description' => t('By default the caption of the accordion toggle switch will be the name of the parent menu or the title of this block, you can change this by setting a custom title.') . ' <em>(' . t('Default') . ': ' . t('empty') . ')</em><br />' . t('Example') . ': <em>' . t('Menu') . '</em>.',
+    '#default_value' => variable_get('superfish_smallamt_' . $delta, ''),
+    '#size' => 50,
+    '#maxlength' => 500,
+  );
+  $form['sf-plugins']['sf-smallscreen']['sf-smallscreen-accordion']['superfish_smallabt_' . $delta] = array(
+    '#type' => 'radios',
+    '#title' => t('Accordion button type'),
+    '#default_value' => variable_get('superfish_smallabt_' . $delta, 1),
+    '#options' => array( 
+      0 => t('Use parent menu items as buttons.'),
+      1 => t('Use parent menu items as buttons, add cloned parent links to sub-menus as well.')  . ' <sup>(' . t('Default') . ')</sup>',
+      2 => t('Create new links next to parent menu item links and use them as buttons.'),
+    ),
   );
   $form['sf-plugins']['sf-supersubs'] = array(
     '#type' => 'fieldset',
@@ -676,6 +709,7 @@ function superfish_block_save($delta = 0, $edit = array()) {
   variable_set('superfish_touchual_' . $delta, $edit['superfish_touchual_' . $delta]);
   variable_set('superfish_touchuam_' . $delta, $edit['superfish_touchuam_' . $delta]);
   variable_set('superfish_small_' . $delta, $edit['superfish_small_' . $delta]);
+  variable_set('superfish_smallact_' . $delta, $edit['superfish_smallact_' . $delta]);
   variable_set('superfish_smallbp_' . $delta, $edit['superfish_smallbp_' . $delta]);
   variable_set('superfish_smallua_' . $delta, $edit['superfish_smallua_' . $delta]);
   variable_set('superfish_smallual_' . $delta, $edit['superfish_smallual_' . $delta]);
@@ -688,6 +722,8 @@ function superfish_block_save($delta = 0, $edit = array()) {
   variable_set('superfish_smallech_' . $delta, $edit['superfish_smallech_' . $delta]);
   variable_set('superfish_smallicm_' . $delta, $edit['superfish_smallicm_' . $delta]);
   variable_set('superfish_smallich_' . $delta, $edit['superfish_smallich_' . $delta]);
+  variable_set('superfish_smallamt_' . $delta, $edit['superfish_smallamt_' . $delta]);
+  variable_set('superfish_smallabt_' . $delta, $edit['superfish_smallabt_' . $delta]);
   variable_set('superfish_supersubs_' . $delta, $edit['superfish_supersubs_' . $delta]);
   variable_set('superfish_minwidth_' . $delta, $edit['superfish_minwidth_' . $delta]);
   variable_set('superfish_maxwidth_' . $delta, $edit['superfish_maxwidth_' . $delta]);
@@ -947,28 +983,36 @@ function superfish_contents($delta = 0) {
         }
       break;
     }
-    $addselected = variable_get('superfish_smallasa_' . $delta, 0);
-    $menuclasses = variable_get('superfish_smallcmc_' . $delta, 0);
-    $hyperlinkclasses = variable_get('superfish_smallchc_' . $delta, 0);
-    $excludeclass_menu = variable_get('superfish_smallecm_' . $delta, '');
-    $excludeclass_hyperlink = variable_get('superfish_smallech_' . $delta, '');
-    $includeclass_menu = variable_get('superfish_smallicm_' . $delta, '');
-    $includeclass_hyperlink = variable_get('superfish_smallich_' . $delta, '');
-    $sfplugins['smallscreen']['addSelected'] = ($addselected == 1) ? TRUE : FALSE;
-    $sfplugins['smallscreen']['menuClasses'] = ($menuclasses == 1) ? TRUE : FALSE;
-    $sfplugins['smallscreen']['hyperlinkClasses'] = ($hyperlinkclasses == 1) ? TRUE : FALSE;
-    if ($menuclasses == 1 && !empty($excludeclass_menu)) {
-      $sfplugins['smallscreen']['excludeClass_menu'] = $excludeclass_menu;
-    }
-    if ($hyperlinkclasses == 1 && !empty($excludeclass_hyperlink)) {
-      $sfplugins['smallscreen']['excludeClass_hyperlink'] = $excludeclass_hyperlink;
-    }
-    if (!empty($includeclass_menu)) {
-      $sfplugins['smallscreen']['includeClass_menu'] = $includeclass_menu;
-    }
-    if (!empty($includeclass_hyperlink)) {
-      $sfplugins['smallscreen']['includeClass_hyperlink'] = $includeclass_hyperlink;
-    }
+    $type = variable_get('superfish_smallact_' . $delta, 1);
+    switch ($type) {
+      case 0:
+        $asa = variable_get('superfish_smallasa_' . $delta, 0);
+        $cmc = variable_get('superfish_smallcmc_' . $delta, 0);
+        $chc = variable_get('superfish_smallchc_' . $delta, 0);
+        $ecm = variable_get('superfish_smallecm_' . $delta, '');
+        $ech = variable_get('superfish_smallech_' . $delta, '');
+        $icm = variable_get('superfish_smallicm_' . $delta, '');
+        $ich = variable_get('superfish_smallich_' . $delta, '');
+
+        $sfplugins['smallscreen']['type'] = 'select';
+        $sfplugins['smallscreen']['addSelected'] = ($asa == 1) ? TRUE : '';
+        $sfplugins['smallscreen']['menuClasses'] = ($cmc == 1) ? TRUE : '';
+        $sfplugins['smallscreen']['hyperlinkClasses'] = ($chc == 1) ? TRUE : '';
+        $sfplugins['smallscreen']['excludeClass_menu'] = ($cmc == 1 && !empty($ecm)) ? $ecm : '';
+        $sfplugins['smallscreen']['excludeClass_hyperlink'] = ($chc == 1 && !empty($ech)) ? $ech : '';
+        $sfplugins['smallscreen']['includeClass_menu'] = (!empty($icm)) ? $icm : '';
+        $sfplugins['smallscreen']['includeClass_hyperlink'] = (!empty($ich)) ? $ich : '';
+
+      break;
+      case 1:
+        if (superfish_library('CSS', 'smallscreen', 'check')) {
+          $block_css = array_merge($block_css, superfish_library('CSS', 'smallscreen', 'add'));
+        }
+        $sfplugins['smallscreen']['accordionButton'] = variable_get('superfish_smallabt_' . $delta, 1);
+        $sfplugins['smallscreen']['expandText'] = (t('Expand') != 'Expand') ? t('Expand') : '';
+        $sfplugins['smallscreen']['collapseText'] = (t('Collapse') != 'Collapse') ? t('Collapse') : '';
+      break;
+    }  
   }
 
   if (variable_get('superfish_spp_' . $delta, 1) == 1 && superfish_library('javascript', 'supposition.js', 'check')) {
@@ -1010,15 +1054,17 @@ function superfish_contents($delta = 0) {
         )
       );
 
-      // Creating a title for the <select> title.
+      // Creating a title for the small-screen menu.
       if ($smallscreen > 0 && superfish_library('javascript', 'sfsmallscreen.js', 'check')) {
-        $smallset = variable_get('superfish_smallset_' . $delta, '');
-        if (empty($smallset)) {
-          $sfplugins['smallscreen']['title'] = $output['subject'];
+        switch ($type) {
+          case 0 :
+            $title = variable_get('superfish_smallset_' . $delta, '');
+          break;
+          case 1 :
+            $title = variable_get('superfish_smallamt_' . $delta, '');
+          break;
         }
-        else {
-          $sfplugins['smallscreen']['title'] = $smallset;
-        }
+        $sfplugins['smallscreen']['title'] = (empty($title)) ? $output['subject'] : $title;
       }
       $sfplugins = array_remove_empty($sfplugins);
 
@@ -1386,6 +1432,7 @@ function superfish_library($type = NULL, $name = NULL, $action = 'add') {
           break;
           case 'navbar':
           case 'vertical':
+          case 'smallscreen':
             if (file_exists($directory . '/superfish-' . $name . '.css')) {
               return TRUE;
             }
@@ -1450,6 +1497,7 @@ function superfish_library($type = NULL, $name = NULL, $action = 'add') {
           break;
           case 'navbar':
           case 'vertical':
+          case 'smallscreen':
             $output = array($directory . '/superfish-' . $name . '.css' => array('type' => 'file', 'weight' => 490));
             return $output;
           break;
