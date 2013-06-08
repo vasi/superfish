@@ -1409,17 +1409,22 @@ function superfish_library($type = NULL, $name = NULL, $action = 'add') {
             $sf_library = array($directory_easing . '/' . $name);
           break;
         }
+        $in_library = FALSE;
         foreach ($sf_library as $s) {
           if (strpos($s, $name) !== FALSE) {
+            $in_library = TRUE;
             if (file_exists($s)) {
               return TRUE;
             }
             else {
-              $file = $directory . (($type == 'CSS') ? '/css' : '') . '/' . $name;
-              watchdog('page not found', '%file', array('%file' => $file), WATCHDOG_ERROR);
+              watchdog('page not found', '%file', array('%file' => $directory . '/' . $name), WATCHDOG_ERROR);
               return FALSE;
             }
           }
+        }
+        if (!$in_library) {
+          watchdog('page not found', t('%path missing from Superfish library configuration, please add it immediately.'), array('%path' => $directory . '/' . $name), WATCHDOG_WARNING, l(t('Superfish library configuration'), 'admin/config/user-interface/superfish'));
+          return FALSE;
         }
       break;
       case 'CSS':
