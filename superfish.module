@@ -1038,13 +1038,13 @@ function superfish_contents($delta = 0) {
         $sfplugins['smallscreen']['excludeClass_hyperlink'] = ($chc == 1 && !empty($ech)) ? $ech : '';
         $sfplugins['smallscreen']['includeClass_menu'] = (!empty($icm)) ? $icm : '';
         $sfplugins['smallscreen']['includeClass_hyperlink'] = (!empty($ich)) ? $ich : '';
-
       break;
       case 1:
         if (superfish_library('CSS', 'smallscreen', 'check')) {
           $block_css = array_merge($block_css, superfish_library('CSS', 'smallscreen', 'add'));
         }
-        $sfplugins['smallscreen']['accordionButton'] = variable_get('superfish_smallabt_' . $delta, 1);
+        $ab = variable_get('superfish_smallabt_' . $delta, 1);
+        $sfplugins['smallscreen']['accordionButton'] = ($ab != 1) ? $ab : '';
         $sfplugins['smallscreen']['expandText'] = (t('Expand') != 'Expand') ? t('Expand') : '';
         $sfplugins['smallscreen']['collapseText'] = (t('Collapse') != 'Collapse') ? t('Collapse') : '';
       break;
