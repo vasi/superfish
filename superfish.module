@@ -1063,8 +1063,10 @@ function superfish_contents($delta = 0) {
 
   if (variable_get('superfish_supersubs_' . $delta, 1) == 1 && superfish_library('javascript', 'supersubs.js', 'check')) {
     $block_js = array_merge($block_js, superfish_library('javascript', 'supersubs', 'add'));
-    $sfplugins['supersubs']['minWidth'] = (variable_get('superfish_minwidth_' . $delta, 12) != 12) ? $minwdith : '';
-    $sfplugins['supersubs']['maxWidth'] = (variable_get('superfish_maxwidth_' . $delta, 27) != 27) ? $maxwidth : '';
+    $minwidth = variable_get('superfish_minwidth_' . $delta, 12);
+    $maxwidth = variable_get('superfish_maxwidth_' . $delta, 27);
+    $sfplugins['supersubs']['minWidth'] = ($minwidth != 12) ? $minwidth : '';
+    $sfplugins['supersubs']['maxWidth'] = ($maxwidth != 27) ? $maxwidth : '';
     if (empty($sfplugins['supersubs']['minWidth']) && empty($sfplugins['supersubs']['maxWidth'])) {
       $sfplugins['supersubs'] = TRUE;
     }
