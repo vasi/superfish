@@ -1834,6 +1834,11 @@ function theme_superfish_build($variables) {
           // Send the result to the sub-menu.
           $sfsettings['megamenu'] = $megamenu_below;
         }
+        if ($megamenu_below == 1) {
+          $megamenu_wrapper = ($menu_item['link']['depth'] == $settings['megamenu_depth']) ? TRUE : FALSE;
+          $megamenu_column = ($menu_item['link']['depth'] == $settings['megamenu_depth'] + 1) ? TRUE : FALSE;
+          $megamenu_content = ($menu_item['link']['depth'] >= $settings['megamenu_depth'] && $menu_item['link']['depth'] <= $settings['megamenu_levels']) ? TRUE : FALSE;
+        }
 
         // sfTouchscreen.
         // Preparing the cloned parent links to be added to the sub-menus.
