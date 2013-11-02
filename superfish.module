@@ -856,7 +856,7 @@ function superfish_contents($delta = 0) {
   }
   $speed = variable_get('superfish_speed_' . $delta, 'fast');
   if ($speed != 'normal') {
-    $sfoptions['speed'] = ((is_numeric($speed)) ? (int)$speed : (($speed == ('slow' || 'normal' || 'fast')) ? '\'' . $speed . '\'' : ''));
+    $sfoptions['speed'] = ((is_numeric($speed)) ? (int)$speed : (($speed == ('slow' || 'normal' || 'fast')) ? $speed : ''));
   }
   $sfoptions['autoArrows'] = (variable_get('superfish_arrow_' . $delta, 1) == 0) ? FALSE : '';
   $sfoptions['dropShadows'] = (variable_get('superfish_shadow_' . $delta, 1) == 0) ? FALSE : '';
