@@ -1920,7 +1920,6 @@ function theme_superfish_build($variables) {
             ),
             'below' => ($show_children) ? $children['content'] : NULL,
             'item' => $menu_item,
-            'localized_options' => $menu_item['link']['localized_options'],
           ),
           'properties' => array(
             'megamenu' => array(
@@ -1999,12 +1998,12 @@ function theme_superfish_menu_item($variables) {
   if ($properties['use_link_theme']) {
     $link_variables = array(
       'menu_item' => $element['item'],
-      'link_options' => $element['localized_options']
+      'link_options' => $element['item']['link']['localized_options']
     );
     $output .= theme('superfish_menu_item_link', $link_variables);
   }
   else {
-    $output .= l($element['item']['link']['title'], $element['item']['link']['href'], $element['localized_options']);
+    $output .= l($element['item']['link']['title'], $element['item']['link']['href'], $element['item']['link']['localized_options']);
   }
   $output .= isset($properties['wrapper']['whl'][1]) ? $properties['wrapper']['whl'][1] : '';
   $output .= ($properties['megamenu']['megamenu_wrapper']) ? '<ul class="sf-megamenu"><li class="sf-megamenu-wrapper ' . $element['attributes']['class'] . '">' : '';
