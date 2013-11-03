@@ -1453,7 +1453,7 @@ function superfish_library($type = NULL, $name = NULL, $action = 'add') {
           }
         }
         if (!$in_library) {
-          watchdog('page not found', t('%path missing from Superfish library configuration, please add it immediately.'), array('%path' => $directory . '/' . $name), WATCHDOG_WARNING, l(t('Superfish library configuration'), 'admin/config/user-interface/superfish'));
+          watchdog('page not found', '%path missing from Superfish library configuration, please add it immediately.', array('%path' => $directory . '/' . $name), WATCHDOG_WARNING, l(t('Superfish library configuration'), 'admin/config/user-interface/superfish'));
           return FALSE;
         }
       break;
