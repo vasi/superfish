@@ -1816,7 +1816,7 @@ function theme_superfish_build($variables) {
         if (drupal_substr($settings['wraphlt'], 0) == ',') {
           array_unshift($whlt, '');
         }
-        $menu_item['link']['title'] = $whlt[0] . check_plain($menu_item['link']['title']) . $whlt[1];
+        $menu_item['link']['title'] = $whlt[0] . $menu_item['link']['title'] . $whlt[1];
         $menu_item['link']['localized_options']['html'] = TRUE;
       }
 
