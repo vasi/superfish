@@ -40,8 +40,9 @@ function superfish_help($path, $arg) {
     case 'admin/modules#description':
       $output .= t('jQuery Superfish plugin for your Drupal menus.');
       break;
+
     case 'admin/config/user-interface/superfish':
-      $output .= t('<p>Block-specific Superfish settings could be found at !link</p>', array('!link' => l('admin/structure/block', 'admin/structure/block')));
+      $output .= t('<p>Block-specific Superfish settings could be found at !link</p>', array('!link' => l(t('Blocks management'), 'admin/structure/block')));
       break;
   }
   return $output;
@@ -154,7 +155,7 @@ function superfish_block_configure($delta = 0) {
   $form['sf-settings']['superfish_pathclass_' . $delta] = array(
     '#type' => 'textfield',
     '#title' => t('Path class'),
-    '#description' =>  t('The class you have applied to list items that lead to the current page.') . ' <em>(' . t('Default') . ': active-trail)</em><br />' . t('Change this <strong>only</strong> if you are <strong>totally sure</strong> of what you are doing.'),
+    '#description' => t('The class you have applied to list items that lead to the current page.') . ' <em>(' . t('Default') . ': active-trail)</em><br />' . t('Change this <strong>only</strong> if you are <strong>totally sure</strong> of what you are doing.'),
     '#default_value' => variable_get('superfish_pathclass_' . $delta, 'active-trail'),
     '#size' => 15,
   );
@@ -168,7 +169,7 @@ function superfish_block_configure($delta = 0) {
   $form['sf-settings']['superfish_slide_' . $delta] = array(
     '#type' => 'select',
     '#title' => t('Slide-in effect'),
-    '#description' => '<em>(' . t('Default') . ': ' . t('Vertical') . ')</em><br />' . ((count(superfish_effects()) == 4) ? t('jQuery Easing plugin is not installed.') . '<br />' . t('The plugin provides a handful number of animation effects, they can be used by uploading the \'jquery.easing.js\' file to the libraries directory within the \'easing\' directory (for example: sites/all/libraries/easing/jquery.easing.js). Refresh this page after the plugin is uploaded, this will make more effects available in the above list.') . '<br />' : '') . '<strong>' . t('Important') . ':</strong> ' . t('Easing effects require jQuery 1.6.1 or higher. If you need to update your jQuery to version 1.6.1 or higher, please use the jQuery Update module.'),
+    '#description' => '<em>(' . t('Default') . ': ' . t('Vertical') . ')</em><br />' . ((count(superfish_effects()) == 4) ? t('jQuery Easing plugin is not installed.') . '<br />' . t("The plugin provides a handful number of animation effects, they can be used by uploading the 'jquery.easing.js' file to the libraries directory within the 'easing' directory (for example: sites/all/libraries/easing/jquery.easing.js). Refresh this page after the plugin is uploaded, this will make more effects available in the above list.") . '<br />' : '') . '<strong>' . t('Important') . ':</strong> ' . t('Easing effects require jQuery 1.6.1 or higher. If you need to update your jQuery to version 1.6.1 or higher, please use the jQuery Update module.'),
     '#default_value' => variable_get('superfish_slide_' . $delta, 'vertical'),
     '#options' => superfish_effects(),
   );
@@ -224,7 +225,7 @@ function superfish_block_configure($delta = 0) {
   $form['sf-plugins']['superfish_hid_' . $delta] = array(
     '#type' => 'checkbox',
     '#title' => t('Enable hoverIntent detection.'),
-    '#description' => t('Prevents accidental firing of animations by waiting until the user\'s mouse slows down enough, hence determinig user\'s <em>intent</em>.') . ' <em>(' . t('Default') . ': ' . t('enabled') . ')</em>',
+    '#description' => t("Prevents accidental firing of animations by waiting until the user's mouse slows down enough, hence determinig user's <em>intent</em>.") . ' <em>(' . t('Default') . ': ' . t('enabled') . ')</em>',
     '#default_value' => variable_get('superfish_hid_' . $delta, 1),
   );
   $form['sf-plugins']['superfish_amw_' . $delta] = array(
@@ -246,8 +247,8 @@ function superfish_block_configure($delta = 0) {
     '#options' => array(
       0 => t('Disable') . '. <sup>(' . t('Default') . ')</sup>',
       1 => t('Enable jQuery sf-Touchscreen plugin for this menu.'),
-      2 => t('Enable jQuery sf-Touchscreen plugin for this menu depending on the user\'s Web browser <strong>window width</strong>.'),
-      3 => t('Enable jQuery sf-Touchscreen plugin for this menu depending on the user\'s Web browser <strong>user agent</strong>.'),
+      2 => t("Enable jQuery sf-Touchscreen plugin for this menu depending on the user's Web browser <strong>window width</strong>."),
+      3 => t("Enable jQuery sf-Touchscreen plugin for this menu depending on the user's Web browser <strong>user agent</strong>."),
     ),
   );
   $form['sf-plugins']['sf-touchscreen']['superfish_touchbh_' . $delta] = array(
@@ -264,7 +265,7 @@ function superfish_block_configure($delta = 0) {
   $form['sf-plugins']['sf-touchscreen']['sf-touchscreen-windowwidth'] = array(
     '#type' => 'fieldset',
     '#title' => t('Window width settings'),
-    '#description' => t('sf-Touchscreen will be enabled only if the width of user\'s Web browser window is smaller than the below value.') . '<br /><br />' . t('Please note that in most cases such a meta tag is necessary for this feature to work properly:') . '<br /><code>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;</code>',
+    '#description' => t("sf-Touchscreen will be enabled only if the width of user's Web browser window is smaller than the below value.") . '<br /><br />' . t('Please note that in most cases such a meta tag is necessary for this feature to work properly:') . '<br /><code>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;</code>',
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
   );
@@ -304,7 +305,7 @@ function superfish_block_configure($delta = 0) {
     '#default_value' => variable_get('superfish_touchuam_' . $delta, 0),
     '#options' => array(
       0 => t('Client-side (JavaScript)'),
-      1 => t('Server-side (PHP)')
+      1 => t('Server-side (PHP)'),
     ),
   );
   $form['sf-plugins']['sf-smallscreen'] = array(
@@ -320,14 +321,14 @@ function superfish_block_configure($delta = 0) {
     '#options' => array(
       0 => t('Disable') . '.',
       1 => t('Enable jQuery sf-Smallscreen plugin for this menu.'),
-      2 => t('Enable jQuery sf-Smallscreen plugin for this menu depending on the user\'s Web browser <strong>window width</strong>.') . ' <sup>(' . t('Default') . ')</sup>',
-      3 => t('Enable jQuery sf-Smallscreen plugin for this menu depending on the user\'s Web browser <strong>user agent</strong>.'),
+      2 => t("Enable jQuery sf-Smallscreen plugin for this menu depending on the user's Web browser <strong>window width</strong>.") . ' <sup>(' . t('Default') . ')</sup>',
+      3 => t("Enable jQuery sf-Smallscreen plugin for this menu depending on the user's Web browser <strong>user agent</strong>."),
     ),
   );
   $form['sf-plugins']['sf-smallscreen']['sf-smallscreen-windowwidth'] = array(
     '#type' => 'fieldset',
     '#title' => t('Window width settings'),
-    '#description' => t('sf-Smallscreen will be enabled only if the width of user\'s Web browser window is smaller than the below value.') . '<br /><br />' . t('Please note that in most cases such a meta tag is necessary for this feature to work properly:') . '<br /><code>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;</code>',
+    '#description' => t("sf-Smallscreen will be enabled only if the width of user's Web browser window is smaller than the below value.") . '<br /><br />' . t('Please note that in most cases such a meta tag is necessary for this feature to work properly:') . '<br /><code>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;</code>',
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
   );
@@ -367,7 +368,7 @@ function superfish_block_configure($delta = 0) {
     '#default_value' => variable_get('superfish_smalluam_' . $delta, 0),
     '#options' => array(
       0 => t('Client-side (JavaScript)'),
-      1 => t('Server-side (PHP)')
+      1 => t('Server-side (PHP)'),
     ),
   );
   $form['sf-plugins']['sf-smallscreen']['superfish_smallact_' . $delta] = array(
@@ -419,7 +420,7 @@ function superfish_block_configure($delta = 0) {
     '#maxlength' => 1000,
     '#states' => array(
       'enabled' => array(
-       ':input[name="superfish_smallcmc_' . $delta . '"]' => array('checked' => TRUE),
+        ':input[name="superfish_smallcmc_' . $delta . '"]' => array('checked' => TRUE),
       ),
     ),
   );
@@ -437,7 +438,7 @@ function superfish_block_configure($delta = 0) {
     '#maxlength' => 1000,
     '#states' => array(
       'enabled' => array(
-       ':input[name="superfish_smallchc_' . $delta . '"]' => array('checked' => TRUE),
+        ':input[name="superfish_smallchc_' . $delta . '"]' => array('checked' => TRUE),
       ),
     ),
   );
@@ -457,7 +458,7 @@ function superfish_block_configure($delta = 0) {
     '#size' => 100,
     '#maxlength' => 1000,
   );
-$form['sf-plugins']['sf-smallscreen']['sf-smallscreen-accordion'] = array(
+  $form['sf-plugins']['sf-smallscreen']['sf-smallscreen-accordion'] = array(
     '#type' => 'fieldset',
     '#title' => t('Accordion settings'),
     '#collapsible' => TRUE,
@@ -571,7 +572,7 @@ $form['sf-plugins']['sf-smallscreen']['sf-smallscreen-accordion'] = array(
   $form['sf-advanced-html']['sf-hyperlinks']['sf-hyperlinktexts']['superfish_hldmenus_' . $delta] = array(
     '#type' => 'textfield',
     '#title' => t('Limit to below menu items'),
-    '#description' => t('Enter menu item ID\'s. Leave empty to include all menus. (Comma separated)') . ' <em>(' . t('Default') . ': ' . t('empty') . ')</em><br />' . t('Example') . ': 5,10,20',
+    '#description' => t("Enter menu item ID's. Leave empty to include all menus. (Comma separated)") . ' <em>(' . t('Default') . ': ' . t('empty') . ')</em><br />' . t('Example') . ': 5,10,20',
     '#default_value' => variable_get('superfish_hldmenus_' . $delta, ''),
     '#size' => 50,
   );
@@ -786,7 +787,6 @@ function superfish_block_save($delta = 0, $edit = array()) {
   variable_set('superfish_liclass_' . $delta, $edit['superfish_liclass_' . $delta]);
   variable_set('superfish_hlclass_' . $delta, $edit['superfish_hlclass_' . $delta]);
   variable_set('superfish_pathcss_' . $delta, $edit['superfish_pathcss_' . $delta]);
-  return;
 }
 
 /**
@@ -840,14 +840,16 @@ function superfish_contents($delta = 0) {
     switch ($slide[1]) {
       case 'vertical':
         $sfoptions['animation']['height'] = array('show', $slide[0]);
-      break;
+        break;
+
       case 'horizontal':
         $sfoptions['animation']['width'] = array('show', $slide[0]);
-      break;
+        break;
+
       case 'diagonal':
         $sfoptions['animation']['height'] = array('show', $slide[0]);
         $sfoptions['animation']['width'] = array('show', $slide[0]);
-      break;
+        break;
     }
     $block_js = array_merge($block_js, superfish_library('javascript', 'easing', 'add'));
   }
@@ -855,19 +857,21 @@ function superfish_contents($delta = 0) {
     switch ($slide) {
       case 'vertical':
         $sfoptions['animation']['height'] = 'show';
-      break;
+        break;
+
       case 'horizontal':
         $sfoptions['animation']['width'] = 'show';
-      break;
+        break;
+
       case 'diagonal':
         $sfoptions['animation']['height'] = 'show';
         $sfoptions['animation']['width'] = 'show';
-      break;
+        break;
     }
   }
   $speed = variable_get('superfish_speed_' . $delta, 'fast');
   if ($speed != 'normal') {
-    $sfoptions['speed'] = ((is_numeric($speed)) ? (int)$speed : (($speed == ('slow' || 'normal' || 'fast')) ? $speed : ''));
+    $sfoptions['speed'] = ((is_numeric($speed)) ? (int) $speed : (($speed == ('slow' || 'normal' || 'fast')) ? $speed : ''));
   }
   $sfoptions['autoArrows'] = (variable_get('superfish_arrow_' . $delta, 1) == 0) ? FALSE : '';
   $sfoptions['dropShadows'] = (variable_get('superfish_shadow_' . $delta, 1) == 0) ? FALSE : '';
@@ -891,51 +895,56 @@ function superfish_contents($delta = 0) {
     $behaviour = variable_get('superfish_touchbh_' . $delta, 2);
     $sfplugins['touchscreen']['behaviour'] = ($behaviour != 2) ? $behaviour : '';
     switch ($touchscreen) {
-      case 1 :
+      case 1:
         $sfplugins['touchscreen']['mode'] = 'always_active';
-      break;
-      case 2 :
+        break;
+
+      case 2:
         $sfplugins['touchscreen']['mode'] = 'window_width';
         $tsbp = variable_get('superfish_touchbp_' . $delta, 768);
-        $sfplugins['touchscreen']['breakpoint'] = ($tsbp != 768) ? (int)$tsbp : '';
-      break;
-      case 3 :
+        $sfplugins['touchscreen']['breakpoint'] = ($tsbp != 768) ? (int) $tsbp : '';
+        break;
+
+      case 3:
         // Which method to use for UA detection.
         $tsuam = variable_get('superfish_touchuam_' . $delta, 0);
         $tsua = variable_get('superfish_touchua_' . $delta, 0);
         switch ($tsuam) {
           // Client-side.
-          case 0 :
+          case 0:
             switch ($tsua) {
-              case 0 :
+              case 0:
                 $sfplugins['touchscreen']['mode'] = 'useragent_predefined';
-              break;
-              case 1 :
+                break;
+
+              case 1:
                 $sfplugins['touchscreen']['mode'] = 'useragent_custom';
                 $tsual = drupal_strtolower(variable_get('superfish_touchual_' . $delta, ''));
                 if (strpos($tsual, '*')) {
                   $tsual = str_replace('*', '|', $tsual);
                 }
                 $sfplugins['touchscreen']['useragent'] = $tsual;
-              break;
+                break;
             }
-          break;
+            break;
+
           // Server-side.
-          case 1 :
+          case 1:
             if (isset($_SERVER['HTTP_USER_AGENT'])) {
               $hua = drupal_strtolower($_SERVER['HTTP_USER_AGENT']);
               switch ($tsua) {
                 // Use the pre-defined list of mobile UA strings.
-                case 0 :
+                case 0:
                   if (preg_match('/(android|bb\d+|meego)|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i', $hua)) {
                     $sfplugins['touchscreen']['mode'] = 'always_active';
                     if ($behaviour == 2) {
                       $sfsettings['clone_parent'] = 1;
                     }
                   }
-                break;
+                  break;
+
                 // Use the custom list of UA strings.
-                case 1 :
+                case 1:
                   $tsual = drupal_strtolower(variable_get('superfish_touchual_' . $delta, ''));
                   $tsuac = array();
                   if (strpos($tsual, '*')) {
@@ -953,12 +962,14 @@ function superfish_contents($delta = 0) {
                       $sfsettings['clone_parent'] = 1;
                     }
                   }
-                break;
+                  break;
+
               }
             }
-          break;
+            break;
+
         }
-      break;
+        break;
     }
   }
 
@@ -966,49 +977,53 @@ function superfish_contents($delta = 0) {
   if ($smallscreen > 0 && superfish_library('javascript', 'sfsmallscreen.js', 'check') == 1) {
     $block_js = array_merge($block_js, superfish_library('javascript', 'sfsmallscreen', 'add'));
     switch ($smallscreen) {
-      case 1 :
+      case 1:
         $sfplugins['smallscreen']['mode'] = 'always_active';
-      break;
-      case 2 :
+        break;
+
+      case 2:
         $sfplugins['smallscreen']['mode'] = 'window_width';
         $ssbp = variable_get('superfish_smallbp_' . $delta, 768);
-        $sfplugins['smallscreen']['breakpoint'] = ($ssbp != 768) ? (int)$ssbp : '';
-      break;
-      case 3 :
+        $sfplugins['smallscreen']['breakpoint'] = ($ssbp != 768) ? (int) $ssbp : '';
+        break;
+
+      case 3:
         // Which method to use for UA detection.
         $ssuam = variable_get('superfish_smalluam_' . $delta, 0);
         $ssua = variable_get('superfish_smallua_' . $delta, 0);
         switch ($ssuam) {
           // Client-side.
-          case 0 :
+          case 0:
             switch ($ssua) {
-              case 0 :
+              case 0:
                 $sfplugins['smallscreen']['mode'] = 'useragent_predefined';
-              break;
-              case 1 :
+                break;
+
+              case 1:
                 $sfplugins['smallscreen']['mode'] = 'useragent_custom';
                 $ssual = drupal_strtolower(variable_get('superfish_smallual_' . $delta, ''));
                 if (strpos($ssual, '*')) {
                   $ssual = str_replace('*', '|', $ssual);
                 }
                 $sfplugins['smallscreen']['useragent'] = $ssual;
-              break;
+                break;
             }
+            break;
 
-          break;
           // Server-side.
-          case 1 :
+          case 1:
             if (isset($_SERVER['HTTP_USER_AGENT'])) {
               $hua = drupal_strtolower($_SERVER['HTTP_USER_AGENT']);
               switch ($ssua) {
                 // Use the pre-defined list of mobile UA strings.
-                case 0 :
-                  if (preg_match('/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i', $hua)) {
+                case 0:
+                  if (preg_match('/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge|maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i', $hua)) {
                     $sfplugins['smallscreen']['mode'] = 'always_active';
                   }
-                break;
+                  break;
+
                 // Use the custom list of UA strings.
-                case 1 :
+                case 1:
                   $ssual = drupal_strtolower(variable_get('superfish_smallual_' . $delta, ''));
                   $ssuac = array();
                   if (strpos($ssual, '*')) {
@@ -1023,12 +1038,13 @@ function superfish_contents($delta = 0) {
                   if (in_array(1, $ssuac)) {
                     $sfplugins['smallscreen']['mode'] = 'always_active';
                   }
-                break;
+                  break;
               }
             }
-          break;
+            break;
+
         }
-      break;
+        break;
     }
     $type = variable_get('superfish_smallact_' . $delta, 1);
     switch ($type) {
@@ -1049,7 +1065,8 @@ function superfish_contents($delta = 0) {
         $sfplugins['smallscreen']['excludeClass_hyperlink'] = ($chc == 1 && !empty($ech)) ? $ech : '';
         $sfplugins['smallscreen']['includeClass_menu'] = (!empty($icm)) ? $icm : '';
         $sfplugins['smallscreen']['includeClass_hyperlink'] = (!empty($ich)) ? $ich : '';
-      break;
+        break;
+
       case 1:
         if (superfish_library('CSS', 'smallscreen', 'check')) {
           $block_css = array_merge($block_css, superfish_library('CSS', 'smallscreen', 'add'));
@@ -1058,7 +1075,7 @@ function superfish_contents($delta = 0) {
         $sfplugins['smallscreen']['accordionButton'] = ($ab != 1) ? $ab : '';
         $sfplugins['smallscreen']['expandText'] = (t('Expand') != 'Expand') ? t('Expand') : '';
         $sfplugins['smallscreen']['collapseText'] = (t('Collapse') != 'Collapse') ? t('Collapse') : '';
-      break;
+        break;
     }
   }
 
@@ -1103,27 +1120,41 @@ function superfish_contents($delta = 0) {
     'id' => $delta,
     'menu_name' => $menu_name,
     'mlid' => $mlid,
-    'sfsettings' => $sfsettings
+    'sfsettings' => $sfsettings,
   );
   if ($output = theme('superfish', $vars)) {
     if (!empty($output['content'])) {
       $output['content'] = array(
         '#type' => 'markup',
-        '#markup' => filter_xss($output['content'], $allowed_tags = array('a', 'abbr', 'acronym', 'address', 'area', 'article', 'aside', 'audio', 'b', 'base', 'bdi', 'bdo', 'big', 'blockquote', 'br', 'button', 'canvas', 'caption', 'cite', 'code', 'col', 'colgroup', 'command', 'datalist', 'dd', 'del', 'details', 'dfn', 'div', 'dl', 'dt', 'em', 'embed', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'frame', 'frameset', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'hgroup', 'hr', 'i', 'iframe', 'img', 'input', 'ins', 'kbd', 'keygen', 'label', 'legend', 'li', 'map', 'mark', 'meter', 'nav', 'noframes', 'noscript', 'object', 'ol', 'optgroup', 'option', 'output', 'p', 'param', 'pre', 'progress', 'q', 'rp', 'rt', 'ruby', 'samp', 'script', 'section', 'select', 'small', 'source', 'span', 'strong', 'sub', 'summary', 'sup', 'table', 'tbody', 'td', 'textarea', 'tfoot', 'th', 'thead', 'time', 'tr', 'track', 'tt', 'ul', 'var', 'video', 'wbr')),
+        '#markup' => filter_xss($output['content'], $allowed_tags = array('a',
+        'abbr', 'acronym', 'address', 'area', 'article', 'aside', 'audio', 'b',
+        'base', 'bdi', 'bdo', 'big', 'blockquote', 'br', 'button', 'canvas',
+        'caption', 'cite', 'code', 'col', 'colgroup', 'command', 'datalist',
+        'dd', 'del', 'details', 'dfn', 'div', 'dl', 'dt', 'em', 'embed',
+        'fieldset', 'figcaption', 'figure', 'footer', 'form', 'frame',
+        'frameset', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'hgroup',
+        'hr', 'i', 'iframe', 'img', 'input', 'ins', 'kbd', 'keygen', 'label',
+        'legend', 'li', 'map', 'mark', 'meter', 'nav', 'noframes', 'noscript',
+        'object', 'ol', 'optgroup', 'option', 'output', 'p', 'param', 'pre',
+        'progress', 'q', 'rp', 'rt', 'ruby', 'samp', 'script', 'section',
+        'select', 'small', 'source', 'span', 'strong', 'sub', 'summary',
+        'sup', 'table', 'tbody', 'td', 'textarea', 'tfoot', 'th', 'thead',
+        'time', 'tr', 'track', 'tt', 'ul', 'var', 'video', 'wbr')),
         '#contextual_links' => array(
           'superfish' => array('admin/structure/menu/manage', array($menu_name)),
-        )
+        ),
       );
 
       // Creating a title for the small-screen menu.
       if ($smallscreen > 0 && superfish_library('javascript', 'sfsmallscreen.js', 'check')) {
         switch ($type) {
-          case 0 :
+          case 0:
             $title = variable_get('superfish_smallset_' . $delta, '');
-          break;
-          case 1 :
+            break;
+
+          case 1:
             $title = variable_get('superfish_smallamt_' . $delta, '');
-          break;
+            break;
         }
         $sfplugins['smallscreen']['title'] = (empty($title)) ? $output['subject'] : $title;
       }
@@ -1144,7 +1175,7 @@ function superfish_contents($delta = 0) {
         }
       }
 
-      // Adding required CSS files
+      // Adding required CSS files.
       if (superfish_library('CSS', 'superfish', 'check')) {
         $block_css = array_merge($block_css, superfish_library('CSS', 'superfish', 'add'));
       }
@@ -1196,6 +1227,7 @@ function superfish_form_block_admin_configure_alter(&$form, $form_state) {
 function superfish_block_validate($form, &$form_state) {
   if ($form_state['values']['module'] == 'superfish') {
     $supersubs_error = FALSE;
+    $allowed_speed = array('slow', 'normal', 'fast');
     $delta = $form_state['values']['delta'];
     $style = $form_state['values']['superfish_style_' . $delta];
     $speed = $form_state['values']['superfish_speed_' . $delta];
@@ -1219,7 +1251,7 @@ function superfish_block_validate($form, &$form_state) {
     if ($style != 'none' && superfish_styles('path', $style) == '') {
       form_set_error('superfish_style_' . $delta, t('Cannot find the CSS file of the selected style.'));
     }
-    elseif (!is_numeric($speed) && !in_array($speed, array('slow', 'normal', 'fast'))) {
+    elseif (!is_numeric($speed) && !in_array($speed, $allowed_speed)) {
       form_set_error('superfish_speed_' . $delta, t('<strong>Animation speed</strong>: unacceptable value entered.'));
     }
     if (!is_numeric($delay)) {
@@ -1460,11 +1492,12 @@ function superfish_library($type = NULL, $name = NULL, $action = 'add') {
           case 'drupal_behavior':
             $name = 'superfish.js';
             $sf_library = array(drupal_get_path('module', 'superfish') . '/' . $name);
-          break;
+            break;
+
           case 'jquery.easing.js':
             $name = 'jquery.easing.js';
             $sf_library = array($directory_easing . '/' . $name);
-          break;
+            break;
         }
         $in_library = FALSE;
         foreach ($sf_library as $s) {
@@ -1483,7 +1516,8 @@ function superfish_library($type = NULL, $name = NULL, $action = 'add') {
           watchdog('page not found', '%path missing from Superfish library configuration, please add it immediately.', array('%path' => $directory . '/' . $name), WATCHDOG_WARNING, l(t('Superfish library configuration'), 'admin/config/user-interface/superfish'));
           return FALSE;
         }
-      break;
+        break;
+
       case 'CSS':
         $directory .= '/css';
         switch ($name) {
@@ -1496,7 +1530,8 @@ function superfish_library($type = NULL, $name = NULL, $action = 'add') {
               watchdog('page not found', '%directory/superfish.css', array('%directory' => $directory), WATCHDOG_WARNING);
               return FALSE;
             }
-          break;
+            break;
+
           case 'navbar':
           case 'vertical':
           case 'smallscreen':
@@ -1507,9 +1542,9 @@ function superfish_library($type = NULL, $name = NULL, $action = 'add') {
               watchdog('page not found', '%directory/superfish-%name.css', array('%directory' => $directory, '%name' => $name), WATCHDOG_WARNING);
               return FALSE;
             }
-          break;
+            break;
         }
-      break;
+        break;
     }
   }
   if ($action == 'add') {
@@ -1519,11 +1554,14 @@ function superfish_library($type = NULL, $name = NULL, $action = 'add') {
           case 'easing':
             $output = array($directory_easing . '/jquery.easing.js' => array('type' => 'file', 'weight' => 490));
             return $output;
-          break;
+
           case 'drupal_behavior':
-            $output = array(drupal_get_path('module', 'superfish') . '/superfish.js' => array('type' => 'file', 'weight' => 495));
+            $output = array(
+              drupal_get_path('module', 'superfish') . '/superfish.js' =>
+              array('type' => 'file', 'weight' => 495),
+            );
             return $output;
-          break;
+
           default:
             if (file_exists($directory . '/superfish.js')) {
               foreach ($sf_library as $s) {
@@ -1531,13 +1569,14 @@ function superfish_library($type = NULL, $name = NULL, $action = 'add') {
                   switch ($name) {
                     case 'superfish':
                       $weight = 480;
-                    break;
+                      break;
+
                     case 'supersubs':
                       $weight = 490;
-                    break;
+                      break;
+
                     default:
                       $weight = 470;
-                    break;
                   }
                   $output = array($s => array('type' => 'file', 'weight' => $weight));
                   return $output;
@@ -1551,9 +1590,9 @@ function superfish_library($type = NULL, $name = NULL, $action = 'add') {
             else {
               watchdog('page not found', '%directory/superfish.js', array('%directory' => $directory), WATCHDOG_ERROR);
             }
-          break;
         }
-      break;
+        break;
+
       case 'CSS':
         $directory .= '/css';
         switch ($name) {
@@ -1561,15 +1600,15 @@ function superfish_library($type = NULL, $name = NULL, $action = 'add') {
           case 'horizontal':
             $output = array($directory . '/superfish.css' => array('type' => 'file', 'weight' => 480));
             return $output;
-          break;
+
           case 'navbar':
           case 'vertical':
           case 'smallscreen':
             $output = array($directory . '/superfish-' . $name . '.css' => array('type' => 'file', 'weight' => 490));
             return $output;
-          break;
+
         }
-      break;
+        break;
     }
   }
 }
@@ -1601,7 +1640,7 @@ function superfish_theme() {
         'id' => NULL,
         'menu_name' => NULL,
         'mlid' => NULL,
-        'sfsettings' => NULL
+        'sfsettings' => NULL,
       ),
     ),
     'superfish_build' => array(
@@ -1611,7 +1650,7 @@ function superfish_theme() {
         'depth' => -1,
         'trail' => NULL,
         'clone_parent' => NULL,
-        'sfsettings' => NULL
+        'sfsettings' => NULL,
       ),
     ),
     'superfish_menu_item' => array(
@@ -1700,7 +1739,7 @@ function theme_superfish($variables) {
       'depth' => $depth,
       'trail' => superfish_build_page_trail(menu_tree_page_data($menu_name)),
       'clone_parent' => FALSE,
-      'sfsettings' => $sfsettings
+      'sfsettings' => $sfsettings,
     );
     if ($menu_tree = theme('superfish_build', $var)) {
       if ($menu_tree['content']) {
@@ -1827,7 +1866,7 @@ function theme_superfish_build($variables) {
       // Add custom HTML codes around the hyperlinks.
       if ($settings['wraphl'] && strpos($settings['wraphl'], ',') !== FALSE) {
         $whl = explode(',', $settings['wraphl']);
-        // The same as above
+        // The same as above.
         if (drupal_substr($settings['wraphl'], 0) == ',') {
           array_unshift($whl, '');
         }
@@ -1839,7 +1878,7 @@ function theme_superfish_build($variables) {
       // Add custom HTML codes around the hyperlinks text.
       if ($settings['wraphlt'] && strpos($settings['wraphlt'], ',') !== FALSE) {
         $whlt = explode(',', $settings['wraphlt']);
-        // The same as above
+        // The same as above.
         if (drupal_substr($settings['wraphlt'], 0) == ',') {
           array_unshift($whlt, '');
         }
@@ -1851,7 +1890,7 @@ function theme_superfish_build($variables) {
 
       if (!empty($menu_item['link']['has_children']) && !empty($menu_item['below']) && $depth != 0 && $expanded === TRUE) {
 
-        // Megamenu is still beta, there is a good chance much of this will be changed.
+        // Megamenu is still beta, there is a good chance this will be changed.
         if (!empty($settings['megamenu_exclude'])) {
           if (is_array($settings['megamenu_exclude'])) {
             $megamenu_below = (in_array($mlid, $settings['megamenu_exclude'])) ? 0 : $megamenu;
@@ -1892,7 +1931,7 @@ function theme_superfish_build($variables) {
           'depth' => $depth,
           'trail' => $trail,
           'clone_parent' => $clone_parent,
-          'sfsettings' => $sfsettings
+          'sfsettings' => $sfsettings,
         );
         $children = theme('superfish_build', $var);
         // Check to see whether it should be displayed.
@@ -1923,7 +1962,8 @@ function theme_superfish_build($variables) {
       }
       $menu_item['link']['localized_options']['attributes']['class'] = array_remove_empty($link_class);
 
-      // The Context module uses theme_menu_link, Superfish does not, this is why we have to do this.
+      // The Context module uses theme_menu_link,
+      // Superfish does not, this is why we have to do this.
       if (function_exists('context_active_contexts')) {
         if ($contexts = context_active_contexts()) {
           foreach ($contexts as $context) {
@@ -1960,6 +2000,7 @@ function theme_superfish_build($variables) {
               'whl' => $whl,
             ),
           ),
+          'sfsettings' => $sfsettings,
         );
         $output['content'] .= theme('superfish_menu_item', $item_variables);
       }
@@ -1999,10 +2040,13 @@ function theme_superfish_build($variables) {
 /**
  * Returns HTML for a menu item.
  *
- * @param $variables
+ * @param array $variables
  *   An associative array containing:
  *   - element: Structured array data for a menu item.
  *   - properties: Various properties of a menu item.
+ *
+ * @return string
+ *   HTML string
  *
  * @ingroup themeable
  */
@@ -2025,7 +2069,7 @@ function theme_superfish_menu_item($variables) {
   if ($properties['use_link_theme']) {
     $link_variables = array(
       'menu_item' => $element['item'],
-      'link_options' => $element['item']['link']['localized_options']
+      'link_options' => $element['item']['link']['localized_options'],
     );
     $output .= theme('superfish_menu_item_link', $link_variables);
   }
@@ -2044,7 +2088,7 @@ function theme_superfish_menu_item($variables) {
 /**
  * Theme a menu item link.
  *
- * @param $variables
+ * @param array $variables
  *   An array of variables containing:
  *    - menu_item: The menu item array.
  *    - link_options: An array of link options.

@@ -47,14 +47,14 @@ function superfish_requirements($phase) {
     else {
       $requirements['superfish']['value'] = $t('Not installed');
       $requirements['superfish']['severity'] = REQUIREMENT_ERROR;
-      $requirements['superfish']['description'] = $t('Please download the Superfish library from !link.', array('!link' => l('http://drupal.org/project/superfish', 'http://drupal.org/project/superfish')));
+      $requirements['superfish']['description'] = $t('Please download the Superfish library from !link.', array('!link' => l($t('Superfish project homepage'), 'http://drupal.org/project/superfish')));
     }
 
     // Check the uploaded Superfish library version.
     if (superfish_library_version() != '1.2-beta2') {
       $requirements['superfish']['value'] = $t('Not supported');
       $requirements['superfish']['severity'] = REQUIREMENT_ERROR;
-      $requirements['superfish']['description'] = $t('The Superfish library requires an update. You can find the update instructions on !link.', array('!link' => l('http://drupal.org/project/superfish', 'http://drupal.org/project/superfish')));
+      $requirements['superfish']['description'] = $t('The Superfish library requires an update. You can find the update instructions on !link.', array('!link' => l($t('Superfish project homepage'), 'http://drupal.org/project/superfish')));
     }
   }
   return $requirements;

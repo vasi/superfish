@@ -91,14 +91,15 @@ function superfish_admin_settings() {
  */
 function superfish_admin_settings_validate($form, &$form_state) {
   $error = array();
+  // Removing blank lines and white spaces.
   $sf_library = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", trim($form_state['values']['superfish_slp']));
   if (empty($sf_library)) {
     form_set_error('superfish_slp', t('<strong>Path to Superfish library</strong> field cannot be empty. Please try the below list:') . '<br /><pre>' . superfish_library_path() . '</pre>');
   }
   else {
-    // Trimming blank lines and such
+    // Trimming blank lines and such.
     $sf_library = explode("\n", $sf_library);
-    // Crystal clear
+    // Crystal clear.
     foreach ($sf_library as $s) {
       if (!file_exists($s)) {
         $error[] = $s;
@@ -135,7 +136,7 @@ function superfish_admin_settings_submit($form, &$form_state) {
     $delta = $after;
     for ($i = 0; $i < $reduce; $i++) {
       $delta++;
-      db_delete('variable')->condition('name', 'superfish_%%_' . $delta , 'LIKE')->execute();
+      db_delete('variable')->condition('name', 'superfish_%%_' . $delta, 'LIKE')->execute();
       db_delete('block')->condition('module', 'superfish')->condition('delta', $delta)->execute();
       db_delete('block_role')->condition('module', 'superfish')->condition('delta', $delta)->execute();
     }
