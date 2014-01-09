@@ -271,10 +271,23 @@ function superfish_block_configure($delta = 0) {
   );
   $form['sf-plugins']['sf-touchscreen']['sf-touchscreen-windowwidth']['superfish_touchbp_' . $delta] = array(
     '#type' => 'textfield',
-    '#description' => t('Also known as "Breakpoint".') . ' <em>(' . t('Default') . ': 768)</em>',
+    '#title' => t('Breakpoint'),
+    '#description' => '<em>(' . t('Default') . ': 768px)</em>',
     '#default_value' => variable_get('superfish_touchbp_' . $delta, 768),
-    '#field_suffix' => t('pixels'),
     '#size' => 10,
+    '#prefix' => '<div class="clearfix"></div><div class="sf-breakpoint" style="float:left;">',
+    '#suffix' => '</div>',
+  );
+  $form['sf-plugins']['sf-touchscreen']['sf-touchscreen-windowwidth']['superfish_touchbpu_' . $delta] = array(
+    '#type' => 'select',
+    '#title' => t('Unit'),
+    '#default_value' => variable_get('superfish_touchbpu_' . $delta, 'px'),
+    '#options' => array(
+      'px' => 'px',
+      'em' => 'em',
+    ),
+    '#prefix' => '<div class="sf-breakpoint-unit" style="float:left;">',
+    '#suffix' => '</div><div class="clearfix"></div>',
   );
   $form['sf-plugins']['sf-touchscreen']['sf-touchscreen-useragent'] = array(
     '#type' => 'fieldset',
@@ -334,10 +347,23 @@ function superfish_block_configure($delta = 0) {
   );
   $form['sf-plugins']['sf-smallscreen']['sf-smallscreen-windowwidth']['superfish_smallbp_' . $delta] = array(
     '#type' => 'textfield',
-    '#description' => t('Also known as "Breakpoint".') . ' <em>(' . t('Default') . ': 768)</em>',
+    '#title' => t('Breakpoint'),
+    '#description' => '<em>(' . t('Default') . ': 768px)</em>',
     '#default_value' => variable_get('superfish_smallbp_' . $delta, 768),
-    '#field_suffix' => t('pixels'),
     '#size' => 10,
+    '#prefix' => '<div class="clearfix"></div><div class="sf-breakpoint" style="float:left;">',
+    '#suffix' => '</div>',
+  );
+  $form['sf-plugins']['sf-smallscreen']['sf-smallscreen-windowwidth']['superfish_smallbpu_' . $delta] = array(
+    '#type' => 'select',
+    '#title' => t('Unit'),
+    '#default_value' => variable_get('superfish_smallbpu_' . $delta, 'px'),
+    '#options' => array(
+      'px' => 'px',
+      'em' => 'em',
+    ),
+    '#prefix' => '<div class="sf-breakpoint-unit" style="float:left;">',
+    '#suffix' => '</div><div class="clearfix"></div>',
   );
   $form['sf-plugins']['sf-smallscreen']['sf-smallscreen-useragent'] = array(
     '#type' => 'fieldset',
@@ -739,12 +765,14 @@ function superfish_block_save($delta = 0, $edit = array()) {
   variable_set('superfish_touch_' . $delta, $edit['superfish_touch_' . $delta]);
   variable_set('superfish_touchbh_' . $delta, $edit['superfish_touchbh_' . $delta]);
   variable_set('superfish_touchbp_' . $delta, $edit['superfish_touchbp_' . $delta]);
+  variable_set('superfish_touchbpu_' . $delta, $edit['superfish_touchbpu_' . $delta]);
   variable_set('superfish_touchua_' . $delta, $edit['superfish_touchua_' . $delta]);
   variable_set('superfish_touchual_' . $delta, $edit['superfish_touchual_' . $delta]);
   variable_set('superfish_touchuam_' . $delta, $edit['superfish_touchuam_' . $delta]);
   variable_set('superfish_small_' . $delta, $edit['superfish_small_' . $delta]);
   variable_set('superfish_smallact_' . $delta, $edit['superfish_smallact_' . $delta]);
   variable_set('superfish_smallbp_' . $delta, $edit['superfish_smallbp_' . $delta]);
+  variable_set('superfish_smallbpu_' . $delta, $edit['superfish_smallbpu_' . $delta]);
   variable_set('superfish_smallua_' . $delta, $edit['superfish_smallua_' . $delta]);
   variable_set('superfish_smallual_' . $delta, $edit['superfish_smallual_' . $delta]);
   variable_set('superfish_smalluam_' . $delta, $edit['superfish_smalluam_' . $delta]);
@@ -903,6 +931,8 @@ function superfish_contents($delta = 0) {
         $sfplugins['touchscreen']['mode'] = 'window_width';
         $tsbp = variable_get('superfish_touchbp_' . $delta, 768);
         $sfplugins['touchscreen']['breakpoint'] = ($tsbp != 768) ? (int) $tsbp : '';
+        $tsbpu = variable_get('superfish_touchbpu_' . $delta, 'px');
+        $sfplugins['touchscreen']['breakpointUnit'] = $tsbpu;
         break;
 
       case 3:
@@ -985,6 +1015,8 @@ function superfish_contents($delta = 0) {
         $sfplugins['smallscreen']['mode'] = 'window_width';
         $ssbp = variable_get('superfish_smallbp_' . $delta, 768);
         $sfplugins['smallscreen']['breakpoint'] = ($ssbp != 768) ? (int) $ssbp : '';
+        $ssbpu = variable_get('superfish_smallbpu_' . $delta, 'px');
+        $sfplugins['smallscreen']['breakpointUnit'] = $ssbpu;
         break;
 
       case 3:
