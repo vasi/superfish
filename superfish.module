@@ -253,7 +253,7 @@ function superfish_block_configure($delta = 0) {
   );
   $form['sf-plugins']['sf-touchscreen']['superfish_touchbh_' . $delta] = array(
     '#type' => 'radios',
-    '#title' => 'Select a behaviour',
+    '#title' => t('Select a behaviour'),
     '#description' => t('Using this plugin, the first click or tap will expand the sub-menu, here you can choose what a second click or tap should do.'),
     '#default_value' => variable_get('superfish_touchbh_' . $delta, 2),
     '#options' => array(
@@ -261,6 +261,11 @@ function superfish_block_configure($delta = 0) {
       1 => t('Hiding the sub-menu on the second tap.'),
       2 => t('Hiding the sub-menu on the second tap, adding cloned parent links to the top of sub-menus as well.') . ' <sup>(' . t('Default') . ')</sup>',
     ),
+  );
+  $form['sf-plugins']['sf-touchscreen']['superfish_touchdh_' . $delta] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Also disable the <em>hover</em> event for all its sub-menus.'),
+    '#default_value' => variable_get('superfish_touchdh_' . $delta, 0),
   );
   $form['sf-plugins']['sf-touchscreen']['sf-touchscreen-windowwidth'] = array(
     '#type' => 'fieldset',
@@ -764,6 +769,7 @@ function superfish_block_save($delta = 0, $edit = array()) {
   variable_set('superfish_amw_' . $delta, $edit['superfish_amw_' . $delta]);
   variable_set('superfish_touch_' . $delta, $edit['superfish_touch_' . $delta]);
   variable_set('superfish_touchbh_' . $delta, $edit['superfish_touchbh_' . $delta]);
+  variable_set('superfish_touchdh_' . $delta, $edit['superfish_touchdh_' . $delta]);
   variable_set('superfish_touchbp_' . $delta, $edit['superfish_touchbp_' . $delta]);
   variable_set('superfish_touchbpu_' . $delta, $edit['superfish_touchbpu_' . $delta]);
   variable_set('superfish_touchua_' . $delta, $edit['superfish_touchua_' . $delta]);
@@ -922,6 +928,9 @@ function superfish_contents($delta = 0) {
     $block_js = array_merge($block_js, superfish_library('javascript', 'sftouchscreen', 'add'));
     $behaviour = variable_get('superfish_touchbh_' . $delta, 2);
     $sfplugins['touchscreen']['behaviour'] = ($behaviour != 2) ? $behaviour : '';
+    if (variable_get('superfish_touchdh_' . $delta, 0)) {
+      $sfplugins['touchscreen']['disableHover'] = TRUE;
+    }
     switch ($touchscreen) {
       case 1:
         $sfplugins['touchscreen']['mode'] = 'always_active';
