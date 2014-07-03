@@ -109,12 +109,12 @@ function superfish_admin_settings_validate($form, &$form_state) {
       $error_message = '';
       if (count($error) > 1) {
         foreach ($error as $e) {
-          $error_message .= '<li>' . $e . '</li>';
+          $error_message .= '<li>' . check_plain($e) . '</li>';
         }
         $error_message = t('Files not found') . ': <ul>' . $error_message . '</ul>';
       }
       else {
-        $error_message = t('File not found') . ': ' . $error[0];
+        $error_message = t('File not found') . ': ' . check_plain($error[0]);
       }
       form_set_error('superfish_slp', $error_message);
     }
