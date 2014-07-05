@@ -622,6 +622,7 @@ function superfish_block_configure($delta = 0) {
   $form['sf-advanced-html']['sf-html-wrappers'] = array(
     '#type' => 'fieldset',
     '#title' => t('HTML wrappers'),
+    '#description' => t('Please consider using CSS pseudo-elements :before &amp; :after before using the features below as improper use of them may break your drop down menu.'),
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
   );
@@ -635,7 +636,7 @@ function superfish_block_configure($delta = 0) {
   );
   $form['sf-advanced-html']['sf-html-wrappers']['superfish_wrapul_' . $delta] = array(
     '#type' => 'textfield',
-    '#title' => t('Around the &lt;UL&gt; content'),
+    '#title' => t('Around the &lt;LI&gt; content'),
     '#description' => t('Insert extra codes <strong>before</strong> and\or <strong>after</strong> the ULs. (Comma separated).') . ' <em>(' . t('Default') . ': ' . t('empty') . ')</em><br />' . t('Examples') . ': <ul><li>&lt;h3&gt;Discover the universe!&lt;/h3&gt;,</li><li>&lt;h3&gt;Hello there!&lt;/h3&gt;,&lt;div style="clear:both"&gt;&lt;/div&gt;</li><li>,&lt;div style="clear:both"&gt;&lt;/div&gt;</li></ul>',
     '#default_value' => variable_get('superfish_wrapul_' . $delta, ''),
     '#size' => 100,
@@ -2070,11 +2071,11 @@ function theme_superfish_build($variables) {
         }
         $output['content'] .= isset($whl[1]) ? $whl[1] : '';
         $output['content'] .= ($megamenu_wrapper) ? '<ul class="sf-megamenu"><li class="sf-megamenu-wrapper ' . $item_class . '">' : '';
-        $output['content'] .= ($show_children) ? (($megamenu_content) ? '<ol>' : '<ul>') : '';
         $output['content'] .= ($show_children) ? (isset($wul[0]) ? $wul[0] : '') : '';
+        $output['content'] .= ($show_children) ? (($megamenu_content) ? '<ol>' : '<ul>') : '';
         $output['content'] .= ($show_children) ? $children['content'] : '';
-        $output['content'] .= ($show_children) ? (isset($wul[1]) ? $wul[1] : '') : '';
         $output['content'] .= ($show_children) ? (($megamenu_content) ? '</ol>' : '</ul>') : '';
+        $output['content'] .= ($show_children) ? (isset($wul[1]) ? $wul[1] : '') : '';
         $output['content'] .= ($megamenu_wrapper) ? '</li></ul>' : '';
         $output['content'] .= ($megamenu_column) ? '</div>' : '';
         $output['content'] .= '</li>';
@@ -2105,11 +2106,11 @@ function theme_superfish_menu_item($variables) {
   $sub_menu = '';
 
   if ($element['below']) {
-    $sub_menu .= ($properties['megamenu']['megamenu_content']) ? '<ol>' : '<ul>';
     $sub_menu .= isset($properties['wrapper']['wul'][0]) ? $properties['wrapper']['wul'][0] : '';
+    $sub_menu .= ($properties['megamenu']['megamenu_content']) ? '<ol>' : '<ul>';
     $sub_menu .= $element['below'];
-    $sub_menu .= isset($properties['wrapper']['wul'][1]) ? $properties['wrapper']['wul'][1] : '';
     $sub_menu .= ($properties['megamenu']['megamenu_content']) ? '</ol>' : '</ul>';
+    $sub_menu .= isset($properties['wrapper']['wul'][1]) ? $properties['wrapper']['wul'][1] : '';
   }
 
   $output = '<li' . drupal_attributes($element['attributes']) . '>';
