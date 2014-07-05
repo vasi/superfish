@@ -861,15 +861,15 @@ function superfish_contents($delta = 0) {
   $sfsettings['hidelinkdescription'] = variable_get('superfish_hhldescription_' . $delta, 0);
   $sfsettings['linkdescription'] = variable_get('superfish_hldescription_' . $delta, 0);
   $sfsettings['hldmenus'] = variable_get('superfish_hldmenus_' . $delta, '');
-  $sfsettings['hldmenus'] = (strpos($sfsettings['hldmenus'], ',')) ? array_remove_empty(explode(',', $sfsettings['hldmenus'])) : $sfsettings['hldmenus'];
+  $sfsettings['hldmenus'] = (strpos($sfsettings['hldmenus'], ',')) ? superfish_array_filter(explode(',', $sfsettings['hldmenus'])) : $sfsettings['hldmenus'];
   $sfsettings['hldexclude'] = variable_get('superfish_hldexclude_' . $delta, '');
-  $sfsettings['hldexclude'] = (strpos($sfsettings['hldexclude'], ',')) ? array_remove_empty(explode(',', $sfsettings['hldexclude'])) : $sfsettings['hldexclude'];
+  $sfsettings['hldexclude'] = (strpos($sfsettings['hldexclude'], ',')) ? superfish_array_filter(explode(',', $sfsettings['hldexclude'])) : $sfsettings['hldexclude'];
   $sfsettings['megamenu'] = variable_get('superfish_multicolumn_' . $delta, 0);
   $sfsettings['megamenu_depth'] = variable_get('superfish_mcdepth_' . $delta, 1);
   $sfsettings['megamenu_depth'] = ($sfsettings['type'] == 'navbar' && $sfsettings['megamenu_depth'] == 1) ? 2 : $sfsettings['megamenu_depth'];
   $sfsettings['megamenu_levels'] = variable_get('superfish_mclevels_' . $delta, 1) + $sfsettings['megamenu_depth'];
   $sfsettings['megamenu_exclude'] = variable_get('superfish_mcexclude_' . $delta, '');
-  $sfsettings['megamenu_exclude'] = (strpos($sfsettings['megamenu_exclude'], ',')) ? array_remove_empty(explode(',', $sfsettings['megamenu_exclude'])) : $sfsettings['megamenu_exclude'];
+  $sfsettings['megamenu_exclude'] = (strpos($sfsettings['megamenu_exclude'], ',')) ? superfish_array_filter(explode(',', $sfsettings['megamenu_exclude'])) : $sfsettings['megamenu_exclude'];
 
   $sfoptions['pathClass'] = ($sfsettings['type'] == 'navbar') ? variable_get('superfish_pathclass_' . $delta, 'active-trail') : '';
   $sfoptions['pathLevels'] = (variable_get('superfish_pathlevels_' . $delta, 1) != 1) ? variable_get('superfish_pathlevels_' . $delta, 1) : '';
@@ -923,7 +923,7 @@ function superfish_contents($delta = 0) {
   else {
     $sfoptions['disableHI'] = TRUE;
   }
-  $sfoptions = array_remove_empty($sfoptions);
+  $sfoptions = superfish_array_filter($sfoptions);
 
   if (variable_get('superfish_amw_' . $delta, 0) == 1 && superfish_library('javascript', 'sfautomaticwidth.js', 'check')) {
     $sfplugins['automaticwidth'] = TRUE;
@@ -1208,7 +1208,7 @@ function superfish_contents($delta = 0) {
         }
         $sfplugins['smallscreen']['title'] = (empty($title)) ? $output['subject'] : $title;
       }
-      $sfplugins = array_remove_empty($sfplugins);
+      $sfplugins = superfish_array_filter($sfplugins);
 
       // Prepare the JavaScript settings.
       $javascript['superfish'][$delta]['id'] = $delta;
@@ -1351,7 +1351,7 @@ function superfish_block_validate($form, &$form_state) {
     if (!empty($extracss)) {
       if (strpos($extracss, ',')) {
         $error = array();
-        $extracss = array_remove_empty(explode(',', $extracss));
+        $extracss = superfish_array_filter(explode(',', $extracss));
         foreach ($extracss as $c) {
           if (!file_exists($c)) {
             $error[] = $c;
@@ -1666,10 +1666,10 @@ function superfish_library($type = NULL, $name = NULL, $action = 'add') {
 /**
  * Helper function to clean up arrays.
  */
-function array_remove_empty($haystack) {
+function superfish_array_filter($haystack) {
   foreach ($haystack as $key => $value) {
     if (is_array($value)) {
-      $haystack[$key] = array_remove_empty($haystack[$key]);
+      $haystack[$key] = superfish_array_filter($haystack[$key]);
     }
     elseif (empty($value) && is_bool($value) !== TRUE) {
       if ($haystack[$key] != '0') {
@@ -2004,13 +2004,13 @@ function theme_superfish_build($variables) {
         $single_children++;
       }
 
-      $item_class = implode(' ', array_remove_empty($item_class));
+      $item_class = implode(' ', superfish_array_filter($item_class));
 
       if (isset($menu_item['link']['localized_options']['attributes']['class'])) {
         $link_class_current = $menu_item['link']['localized_options']['attributes']['class'];
-        $link_class = array_merge($link_class_current, array_remove_empty($link_class));
+        $link_class = array_merge($link_class_current, superfish_array_filter($link_class));
       }
-      $menu_item['link']['localized_options']['attributes']['class'] = array_remove_empty($link_class);
+      $menu_item['link']['localized_options']['attributes']['class'] = superfish_array_filter($link_class);
 
       // The Context module uses theme_menu_link,
       // Superfish does not, this is why we have to do this.
