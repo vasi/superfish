@@ -8,6 +8,12 @@
     attach: function (context, settings) {
       // Take a look at each list to apply Superfish to.
       $.each(settings.superfish || {}, function(index, options) {
+        if (!options) {
+          // On iOS 8, jQuery.each may return spurious entries. Skip them.
+          // See https://www.drupal.org/node/2393851
+          return true;
+        }
+
         // Process all Superfish lists.
         $('#superfish-' + options.id, context).once('superfish', function() {
           var list = $(this);
